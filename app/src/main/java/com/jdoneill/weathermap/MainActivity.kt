@@ -18,6 +18,7 @@
 package com.jdoneill.weathermap
 
 import android.os.Bundle
+import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -42,6 +43,12 @@ class MainActivity : AppCompatActivity() {
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
+
+        val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+        mapView.addAttributionViewLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            val heightDelta = bottom - oldBottom
+            params.bottomMargin += heightDelta
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -59,4 +66,5 @@ class MainActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }
