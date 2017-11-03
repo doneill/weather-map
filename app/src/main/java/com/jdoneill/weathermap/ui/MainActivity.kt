@@ -15,7 +15,7 @@
  *
  */
 
-package com.jdoneill.weathermap
+package com.jdoneill.weathermap.ui
 
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
@@ -25,6 +25,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.esri.arcgisruntime.mapping.Basemap
+import com.jdoneill.weathermap.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
