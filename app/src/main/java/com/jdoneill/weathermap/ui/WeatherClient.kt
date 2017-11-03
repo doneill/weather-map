@@ -17,6 +17,7 @@
 package com.jdoneill.weathermap.ui
 
 import com.jdoneill.weathermap.BuildConfig
+import com.jdoneill.weathermap.data.Constants
 import com.jdoneill.weathermap.data.Weather
 import com.jdoneill.weathermap.data.service.WeatherService
 import retrofit2.Call
@@ -30,11 +31,12 @@ class WeatherClient {
     /**
      * Get weather forecast at coordinate location
      *
-     * @lat coordinate 
+     * @lat coordinate latitude
+     * @lon coordinate longitute
      */
     fun getWeatherForCoord(lat: Float, lon: Float): Call<Weather> {
         val network = Retrofit.Builder()
-                .baseUrl("http://api.openweathermap.org/data/2.5/")
+                .baseUrl(Constants.HTTP_API_OPENWEATHERMAP_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         val weatherServices = network.create(WeatherService::class.java)
