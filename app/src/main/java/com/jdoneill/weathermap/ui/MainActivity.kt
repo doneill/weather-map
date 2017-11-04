@@ -46,6 +46,9 @@ class MainActivity : AppCompatActivity() {
     // degree sign
     private val DEGREE: String = "\u00B0"
     private lateinit var callout: Callout
+    private lateinit var locationDisplay: LocationDisplay
+
+    private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +56,32 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         // show map
-        val map = ArcGISMap(Basemap.Type.DARK_GRAY_CANVAS_VECTOR, 47.495052, -121.786863, 12)
+        val map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
         mapView.map = map
         // graphics overlay for tapped location marker
         val mvOverlay = addGraphicsOverlay(mapView)
+
+        // get the MapView location display
+        locationDisplay = mapView.locationDisplay
+
+        val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) === PackageManager.PERMISSION_GRANTED)
+        val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) === PackageManager.PERMISSION_GRANTED)
+
+        if(permFineLoc && permCoarseLoc){
+            locationDisplay.startAsync()
+            val centerPnt = locationDisplay.location.position
+            weatherAtLocation(centerPnt, mvOverlay)
+        }else{
+            val requestCode = 2
+            ActivityCompat.requestPermissions(this@MainActivity, reqPermissions, requestCode)
+            toast("Error in DataSourceChangedListner")
+        }
+
+        locationDisplay.addDataSourceStatusChangedListener {
+
+            toast("Location Changed")
+
+        }
 
         // respond to single taps on mapview
         mapView.onTouchListener = object: DefaultMapViewOnTouchListener(this, mapView) {
@@ -134,6 +159,13 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         mapView.resume()
     }
+
+    override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray) =
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                locationDisplay.startAsync()
+            } else {
+                toast("denied")
+            }
 
     /**
      * Create a Graphics Overlay
