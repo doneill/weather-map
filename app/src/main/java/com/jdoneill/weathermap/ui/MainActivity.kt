@@ -101,7 +101,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         fab.setOnClickListener { view ->
-            locationDisplay.startAsync()
+
+            if(locationDisplay.isStarted){
+                locationDisplay.stop()
+            }else{
+                // clear any graphics and callouts
+                mvOverlay.graphics.clear()
+                mapView.callout.dismiss()
+                locationDisplay.startAsync()
+                val centerPnt = locationDisplay.location.position
+                weatherAtLocation(centerPnt, mvOverlay)
+            }
+
         }
 
         val params = fab.layoutParams as CoordinatorLayout.LayoutParams
