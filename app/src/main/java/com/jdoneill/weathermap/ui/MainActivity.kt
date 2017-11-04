@@ -82,12 +82,6 @@ class MainActivity : AppCompatActivity() {
             toast("Error in DataSourceChangedListner")
         }
 
-        locationDisplay.addDataSourceStatusChangedListener {
-
-            toast("Location Changed")
-
-        }
-
         // respond to single taps on mapview
         mapView.onTouchListener = object: DefaultMapViewOnTouchListener(this, mapView) {
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
