@@ -98,38 +98,16 @@ class MainActivity : AppCompatActivity() {
                 val screenPoint: android.graphics.Point = android.graphics.Point(motionEvent!!.x.toInt(), motionEvent.y.toInt())
                 // create a map point from screen point
                 val mapPoint: Point = mapView.screenToLocation(screenPoint)
-                // convert to WGS84 for lat/lon format
-                val wgs84: Point = GeometryEngine.project(mapPoint, SpatialReferences.getWgs84()) as Point
+                // get the weather at tapped location
+                weatherAtLocation(mapPoint, mvOverlay)
 
-                // get weather from location tapped
-                val network = WeatherClient()
-                val call = network.getWeatherForCoord(wgs84.y.toFloat(), wgs84.x.toFloat())
-                call.enqueue(object : Callback<Weather> {
-                    override fun onResponse(call: Call<Weather>?, response: Response<Weather>?) {
-                        val weather: Weather? = response?.body()
-                        // present date if main not null
-                        weather?.let { presentData(it, mapPoint, mvOverlay) }
-
-                        val name = weather?.name
-                        val sys = weather?.sys
-                        val sunrise = sys?.sunrise
-                        val sunset = sys?.sunset
-                        println("station name: $name | sunrise: $sunrise | sunset: $sunset")
-
-                    }
-
-                    override fun onFailure(call: Call<Weather>?, t: Throwable?) {
-                        t?.printStackTrace()
-                    }
-                })
                 return super.onSingleTapConfirmed(motionEvent)
             }
 
         }
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            locationDisplay.startAsync()
         }
 
         val params = fab.layoutParams as CoordinatorLayout.LayoutParams
