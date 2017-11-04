@@ -17,10 +17,14 @@
 
 package com.jdoneill.weathermap.ui
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.support.annotation.NonNull
 import android.support.design.widget.CoordinatorLayout
-import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -37,6 +41,7 @@ import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.data.Weather
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
