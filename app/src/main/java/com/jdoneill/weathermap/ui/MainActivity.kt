@@ -228,7 +228,14 @@ class MainActivity : AppCompatActivity() {
         callout.content = calloutContent
         callout.setGeoElement(locationGraphic, mapPoint)
         callout.show()
-        // center on the tapped location
-        mapView.setViewpointCenterAsync(mapPoint)
+        // center on the location, zoom in when scaled out
+        val mapScale = mapView.mapScale
+        if(mapScale < 350000.0){
+            mapView.setViewpointCenterAsync(mapPoint)
+        }else{
+            mapView.setViewpointCenterAsync(mapPoint, 350000.0)
+        }
+
+
     }
 }
