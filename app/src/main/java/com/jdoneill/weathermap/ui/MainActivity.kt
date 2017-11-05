@@ -58,8 +58,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     // degree sign
     private val DEGREE: String = "\u00B0"
+    private lateinit var map: ArcGISMap
     private lateinit var callout: Callout
     private lateinit var locationDisplay: LocationDisplay
+
+    private lateinit var clearLayersItem: MenuItem
+    private lateinit var precipLayerItem: MenuItem
+    private lateinit var tempLayerItem: MenuItem
 
     private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
 
@@ -69,19 +74,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         setSupportActionBar(toolbar)
 
         // show map
-        val map = ArcGISMap(Basemap.createLightGrayCanvas())
+        map = ArcGISMap(Basemap.createLightGrayCanvas())
         mapView.map = map
-        // add open weather precipitation layer
-        var subDomains = Arrays.asList("a")
-        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
-        val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
-        openPrecipLayer.loadAsync()
-        openPrecipLayer.addDoneLoadingListener {
-            if(openPrecipLayer.loadStatus == LoadStatus.LOADED){
-                info { "Open precip layer loaded" }
-                map.operationalLayers.add(openPrecipLayer)
-            }
-        }
 
         // graphics overlay for tapped location marker
         val mvOverlay = addGraphicsOverlay(mapView)
@@ -145,17 +139,47 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
+
+        clearLayersItem = menu.getItem(0)
+        precipLayerItem = menu.getItem(1)
+        tempLayerItem = menu.getItem(2)
+        // set clear layers item checked by default
+        clearLayersItem.isChecked = true
+
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+
+        R.id.layer_clear -> consume{
+            map.operationalLayers.clear()
+            clearLayersItem.isChecked = true
         }
+        R.id.layer_precip -> consume{
+            map.operationalLayers.clear()
+            // add open weather precipitation layer
+            val subDomains = Arrays.asList("a")
+            val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
+            val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
+            openPrecipLayer.loadAsync()
+            openPrecipLayer.addDoneLoadingListener {
+                if(openPrecipLayer.loadStatus == LoadStatus.LOADED){
+                    info { "Open precip layer loaded" }
+                    map.operationalLayers.add(openPrecipLayer)
+                }
+            }
+            precipLayerItem.isChecked = true
+        }
+        R.id.layer_temp -> consume{
+            map.operationalLayers.clear()
+            tempLayerItem.isChecked = true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    private inline fun consume(f: () -> Unit): Boolean{
+        f()
+        return true
     }
 
     override fun onPause() {
