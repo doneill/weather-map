@@ -33,20 +33,28 @@ import android.widget.TextView
 import com.esri.arcgisruntime.geometry.GeometryEngine
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReferences
+import com.esri.arcgisruntime.layers.WebTiledLayer
+import com.esri.arcgisruntime.loadable.LoadStatus
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.esri.arcgisruntime.mapping.Basemap
 import com.esri.arcgisruntime.mapping.view.*
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
+import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.data.Weather
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), AnkoLogger {
+
+    private val APIKEY: String = BuildConfig.API_KEY
 
     // degree sign
     private val DEGREE: String = "\u00B0"
@@ -61,8 +69,20 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         // show map
-        val map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
+        val map = ArcGISMap(Basemap.createLightGrayCanvas())
         mapView.map = map
+        // add open weather precipitation layer
+        var subDomains = Arrays.asList("a")
+        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
+        val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
+        openPrecipLayer.loadAsync()
+        openPrecipLayer.addDoneLoadingListener {
+            if(openPrecipLayer.loadStatus == LoadStatus.LOADED){
+                info { "Open precip layer loaded" }
+                map.operationalLayers.add(openPrecipLayer)
+            }
+        }
+
         // graphics overlay for tapped location marker
         val mvOverlay = addGraphicsOverlay(mapView)
 
@@ -219,7 +239,7 @@ class MainActivity : AppCompatActivity() {
         val lowTemp = main.maxTemp
 
         // create a marker at tapped location
-        val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CROSS, Color.WHITE, 15.0f)
+        val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CROSS, Color.BLACK, 15.0f)
         val locationGraphic = Graphic(mapPoint, locationMarker)
         dataOverlay.graphics.add(locationGraphic)
 
@@ -238,7 +258,7 @@ class MainActivity : AppCompatActivity() {
         if(mapScale < 350000.0){
             mapView.setViewpointCenterAsync(mapPoint)
         }else{
-            mapView.setViewpointCenterAsync(mapPoint, 350000.0)
+            mapView.setViewpointCenterAsync(mapPoint, 1050000.0)
         }
 
 
