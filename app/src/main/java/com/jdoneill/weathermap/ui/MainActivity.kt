@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     private lateinit var tempLayerItem: MenuItem
 
     private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+    private var subDomains = Arrays.asList("a")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -158,7 +159,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         R.id.layer_precip -> consume{
             map.operationalLayers.clear()
             // add open weather precipitation layer
-            val subDomains = Arrays.asList("a")
             val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
             val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
             openPrecipLayer.loadAsync()
