@@ -64,15 +64,17 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     // degree sign
     private val DEGREE: String = "\u00B0"
+    // mapping
     private lateinit var map: ArcGISMap
     private lateinit var callout: Callout
     private lateinit var locationDisplay: LocationDisplay
-
+    // menu items
     private lateinit var clearLayersItem: MenuItem
     private lateinit var precipLayerItem: MenuItem
     private lateinit var tempLayerItem: MenuItem
-
+    // runtime permissions
     private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+    // subdomains for web tiled layer
     private var subDomains = Arrays.asList("a")
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,14 +92,17 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         // get the MapView location display
         locationDisplay = mapView.locationDisplay
 
+        // permission state
         val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) === PackageManager.PERMISSION_GRANTED)
         val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) === PackageManager.PERMISSION_GRANTED)
-
+        // check if permissions needed
         if(permFineLoc && permCoarseLoc){
+            // have required permissions
             locationDisplay.startAsync()
             val centerPnt = locationDisplay.location.position
             weatherAtLocation(centerPnt, mvOverlay)
         }else{
+            // request permissions at runtime
             val requestCode = 2
             ActivityCompat.requestPermissions(this@MainActivity, reqPermissions, requestCode)
             toast("Error in DataSourceChangedListner")
@@ -121,21 +126,23 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         }
 
+        // turn on/off location display
         fab.setOnClickListener { view ->
-
             if(locationDisplay.isStarted){
                 locationDisplay.stop()
             }else{
                 // clear any graphics and callouts
                 mvOverlay.graphics.clear()
                 mapView.callout.dismiss()
+                // start location display
                 locationDisplay.startAsync()
+                // zoom to location and display weather
                 val centerPnt = locationDisplay.location.position
                 weatherAtLocation(centerPnt, mvOverlay)
             }
-
         }
 
+        // allow fab to reposition based on attribution bar layout
         val params = fab.layoutParams as CoordinatorLayout.LayoutParams
         mapView.addAttributionViewLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
             val heightDelta = bottom - oldBottom
@@ -146,7 +153,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
-
+        // assign menu items
         clearLayersItem = menu.getItem(0)
         precipLayerItem = menu.getItem(1)
         tempLayerItem = menu.getItem(2)
@@ -157,11 +164,12 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-
+        // clear all layers
         R.id.layer_clear -> consume{
             map.operationalLayers.clear()
             clearLayersItem.isChecked = true
         }
+        // add precipitation layer
         R.id.layer_precip -> consume{
             map.operationalLayers.clear()
             // add open weather precipitation layer
@@ -176,9 +184,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             }
             // zoom out to see layer
             if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
-
             precipLayerItem.isChecked = true
         }
+        // add temperature layer
         R.id.layer_temp -> consume{
             map.operationalLayers.clear()
             // add open weather temperature layer
@@ -193,7 +201,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             }
             // zoom out to see layer
             if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
-
             tempLayerItem.isChecked = true
         }
         else -> super.onOptionsItemSelected(item)
@@ -306,7 +313,5 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }else{
             mapView.setViewpointCenterAsync(mapPoint, 1050000.0)
         }
-
-
     }
 }
