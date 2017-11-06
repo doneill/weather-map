@@ -172,6 +172,16 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
         R.id.layer_temp -> consume{
             map.operationalLayers.clear()
+            // add open weather temperature layer
+            val templateUri = "http://{subDomain}.tile.openweathermap.org/map/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
+            val openTempLayer = WebTiledLayer(templateUri, subDomains)
+            openTempLayer.loadAsync()
+            openTempLayer.addDoneLoadingListener {
+                if(openTempLayer.loadStatus == LoadStatus.LOADED){
+                    info { "Open precip layer loaded" }
+                    map.operationalLayers.add(openTempLayer)
+                }
+            }
             tempLayerItem.isChecked = true
         }
         else -> super.onOptionsItemSelected(item)
