@@ -174,6 +174,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     map.operationalLayers.add(openPrecipLayer)
                 }
             }
+            // zoom out to see layer
+            if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+
             precipLayerItem.isChecked = true
         }
         R.id.layer_temp -> consume{
@@ -188,6 +191,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     map.operationalLayers.add(openTempLayer)
                 }
             }
+            // zoom out to see layer
+            if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+
             tempLayerItem.isChecked = true
         }
         else -> super.onOptionsItemSelected(item)
