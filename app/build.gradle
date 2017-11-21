@@ -35,6 +35,7 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
     implementation "com.android.support:design:$andSupportLibVersion"
     implementation "com.esri.arcgisruntime:arcgis-android:$arcgisVersion"
+    implementation "com.google.android.gms:play-services-places:$playServicesVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 }
