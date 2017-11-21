@@ -17,6 +17,10 @@ android {
     }
 
     buildTypes {
+        debug{
+            resValue "string", "google_maps_api_key",
+                    (project.findProperty("PLACES_API_KEY") ?: "")
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -31,6 +35,7 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
     implementation "com.android.support:design:$andSupportLibVersion"
     implementation "com.esri.arcgisruntime:arcgis-android:$arcgisVersion"
+    implementation "com.google.android.gms:play-services-places:$playServicesVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
 }

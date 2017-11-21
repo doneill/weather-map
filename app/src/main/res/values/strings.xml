@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Weather Map</string>
     <string name="action_settings">Settings</string>
+    <string name="place_search">Search</string>
     <!-- Open Weather Map Layers -->
     <string name="layer_clear">Clear Layers</string>
     <string name="layer_precip">Precipitation</string>
