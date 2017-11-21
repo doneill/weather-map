@@ -18,6 +18,7 @@
 package com.jdoneill.weathermap.ui
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -30,6 +31,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.widget.TextView
+
 import com.esri.arcgisruntime.geometry.GeometryEngine
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReferences
@@ -44,23 +46,35 @@ import com.esri.arcgisruntime.mapping.view.GraphicsOverlay
 import com.esri.arcgisruntime.mapping.view.LocationDisplay
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
+
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
+import com.google.android.gms.common.GooglePlayServicesRepairableException
+import com.google.android.gms.location.places.ui.PlaceAutocomplete
+
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.data.Weather
+
 import kotlinx.android.synthetic.main.activity_main.fab
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.content_main.mapView
+
 import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.error
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 import java.util.*
 
 class MainActivity : AppCompatActivity(), AnkoLogger {
 
     private val APIKEY: String = BuildConfig.API_KEY
+    private val REQUEST_CODE_AUTOCOMPLETE = 1
 
     // degree sign
     private val DEGREE: String = "\u00B0"
@@ -72,6 +86,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     private lateinit var clearLayersItem: MenuItem
     private lateinit var precipLayerItem: MenuItem
     private lateinit var tempLayerItem: MenuItem
+    private lateinit var placeSearchItem: MenuItem
     // runtime permissions
     private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     // subdomains for web tiled layer
@@ -105,7 +120,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             // request permissions at runtime
             val requestCode = 2
             ActivityCompat.requestPermissions(this@MainActivity, reqPermissions, requestCode)
-            toast("Error in DataSourceChangedListner")
+            toast("Error in DataSourceChangedListener")
         }
 
         // respond to single taps on mapview
@@ -157,6 +172,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         clearLayersItem = menu.getItem(0)
         precipLayerItem = menu.getItem(1)
         tempLayerItem = menu.getItem(2)
+        placeSearchItem = menu.getItem(3)
         // set clear layers item checked by default
         clearLayersItem.isChecked = true
 
@@ -164,6 +180,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+
+        R.id.place_search -> consume {
+            info { "PLACES: " + "Search button tapped" }
+
+            openAutocompleteActivity()
+        }
+
         // clear all layers
         R.id.layer_clear -> consume{
             map.operationalLayers.clear()
@@ -227,6 +250,46 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             } else {
                 toast("denied")
             }
+
+    private fun openAutocompleteActivity() = try {
+        // The autocomplete activity requires Google Play Services to be available. The intent
+        // builder checks this and throws an exception if it is not the case.
+        val intent = PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                .build(this)
+        startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE)
+    } catch (e:GooglePlayServicesRepairableException) {
+        // Indicates that Google Play Services is either not installed or not up to date. Prompt
+        // the user to correct the issue.
+        GoogleApiAvailability.getInstance().getErrorDialog(this, e.connectionStatusCode,
+                0 /* requestCode */).show()
+    } catch (e:GooglePlayServicesNotAvailableException) {
+        // Indicates that Google Play Services is not available and the problem is not easily
+        // resolvable.
+        val message = ("Google Play Services is not available: ${GoogleApiAvailability.getInstance().getErrorString(e.errorCode)}")
+        info { "PLACES: " + message }
+        toast(message)
+    }
+
+    /**
+     * Called after the autocomplete activity has finished to return its result.
+     */
+    override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent) {
+        super.onActivityResult(requestCode, resultCode, data)
+        // Check that the result was from the autocomplete widget.
+        if (requestCode == REQUEST_CODE_AUTOCOMPLETE) {
+            if (resultCode == RESULT_OK) {
+                // Get the user's selected place from the Intent.
+                val place = PlaceAutocomplete.getPlace(this, data)
+                info ({ "PLACES: Place Selected: ${place.name}" })
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                val status = PlaceAutocomplete.getStatus(this, data)
+                error({ "PLACES: Error: Status = $status.toString()" })
+            } else if (resultCode == RESULT_CANCELED) {
+                // Indicates that the activity closed before a selection was made. For example if
+                // the user pressed the back button.
+            }
+        }
+    }
 
     /**
      * Create a Graphics Overlay
