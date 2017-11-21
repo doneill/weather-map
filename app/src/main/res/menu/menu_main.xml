@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.jdoneill.weathermap.ui.MainActivity">
 
+    <item
+        android:id="@+id/place_search"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/place_search"/>
+
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/layer_clear"
