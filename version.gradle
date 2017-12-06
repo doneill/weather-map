@@ -9,11 +9,12 @@ ext {
     // app dependencies
     kotlinVersion = '1.2.0-rc-84'
     ankoVersion = '0.10.2'
-    andSupportLibVersion = '27.0.1'
+    andSupportLibVersion = '27.0.2'
     constraintLayoutVersion = '1.0.2'
     arcgisVersion = '100.1.0'
-    playServicesVersion = '11.6.0'
+    playServicesVersion = '11.6.2'
     retrofitVersion = '2.3.0'
+    leakcanaryVersion = '1.5.4'
     // plugin versions
     gradleVersion = '3.1.0-alpha04'
 }
