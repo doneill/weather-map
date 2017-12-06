@@ -29,6 +29,8 @@ android {
 }
 
 dependencies {
+    debugImplementation"com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
     implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
     implementation "com.android.support:appcompat-v7:$andSupportLibVersion"
