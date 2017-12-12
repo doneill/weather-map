@@ -109,8 +109,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         locationDisplay = mapView.locationDisplay
 
         // permission state
-        val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) === PackageManager.PERMISSION_GRANTED)
-        val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) === PackageManager.PERMISSION_GRANTED)
+        val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
+        val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) == PackageManager.PERMISSION_GRANTED)
         // check if permissions needed
         if(permFineLoc && permCoarseLoc){
             // have required permissions
