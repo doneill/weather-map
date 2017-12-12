@@ -71,13 +71,13 @@ import retrofit2.Response
 
 import java.util.*
 
+const val APIKEY = BuildConfig.API_KEY
+const val REQUEST_CODE_AUTOCOMPLETE = 1
+// degree sign
+const val DEGREE: String = "\u00B0"
+
 class MainActivity : AppCompatActivity(), AnkoLogger {
 
-    private val APIKEY: String = BuildConfig.API_KEY
-    private val REQUEST_CODE_AUTOCOMPLETE = 1
-
-    // degree sign
-    private val DEGREE: String = "\u00B0"
     // mapping
     private lateinit var map: ArcGISMap
     private lateinit var mvOverlay: GraphicsOverlay
@@ -109,8 +109,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         locationDisplay = mapView.locationDisplay
 
         // permission state
-        val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) === PackageManager.PERMISSION_GRANTED)
-        val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) === PackageManager.PERMISSION_GRANTED)
+        val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
+        val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) == PackageManager.PERMISSION_GRANTED)
         // check if permissions needed
         if(permFineLoc && permCoarseLoc){
             // have required permissions
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // turn on/off location display
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener { _ ->
             if(locationDisplay.isStarted){
                 locationDisplay.stop()
             }else{
@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         // allow fab to reposition based on attribution bar layout
         val params = fab.layoutParams as CoordinatorLayout.LayoutParams
-        mapView.addAttributionViewLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+        mapView.addAttributionViewLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             val heightDelta = bottom - oldBottom
             params.bottomMargin += heightDelta
         }
@@ -369,8 +369,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         // create a textview for the callout
         val calloutContent = TextView(applicationContext)
         calloutContent.setTextColor(Color.BLACK)
-        // format coordinates to 4 decimal places
-        calloutContent.text = "Name: $cityName | Temp: $temp$DEGREE | High: $highTemp$DEGREE | Low: $lowTemp$DEGREE"
+        // create text from string resource
+        val calloutText = getString(R.string.callout_text, cityName, temp, DEGREE, highTemp, DEGREE, lowTemp, DEGREE)
+        calloutContent.text = calloutText
         // get callout, set content and geoelement graphic
         callout = mapView.callout
         callout.content = calloutContent

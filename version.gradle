@@ -4,10 +4,10 @@ ext {
     targetSdkVersion = 27
     compileSdkVersion = 27
     buildToolsVersion = '27.0.1'
-    versionCode = 1
-    versionName = '1.0.0'
+    versionCode = 0
+    versionName = '0.0.3'
     // app dependencies
-    kotlinVersion = '1.2.0-rc-84'
+    kotlinVersion = '1.2.10'
     ankoVersion = '0.10.2'
     andSupportLibVersion = '27.0.2'
     constraintLayoutVersion = '1.0.2'
