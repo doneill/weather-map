@@ -369,8 +369,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         // create a textview for the callout
         val calloutContent = TextView(applicationContext)
         calloutContent.setTextColor(Color.BLACK)
-        // format coordinates to 4 decimal places
-        calloutContent.text = "Name: $cityName | Temp: $temp$DEGREE | High: $highTemp$DEGREE | Low: $lowTemp$DEGREE"
+        // create text from string resource
+        val calloutText = getString(R.string.callout_text, cityName, temp, DEGREE, highTemp, DEGREE, lowTemp, DEGREE)
+        calloutContent.text = calloutText
         // get callout, set content and geoelement graphic
         callout = mapView.callout
         callout.content = calloutContent
