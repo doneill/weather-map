@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // turn on/off location display
-        fab.setOnClickListener { view ->
+        fab.setOnClickListener { _ ->
             if(locationDisplay.isStarted){
                 locationDisplay.stop()
             }else{
@@ -160,7 +160,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         // allow fab to reposition based on attribution bar layout
         val params = fab.layoutParams as CoordinatorLayout.LayoutParams
-        mapView.addAttributionViewLayoutChangeListener { view, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+        mapView.addAttributionViewLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             val heightDelta = bottom - oldBottom
             params.bottomMargin += heightDelta
         }
