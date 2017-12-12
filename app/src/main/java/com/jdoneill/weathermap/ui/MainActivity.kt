@@ -71,13 +71,13 @@ import retrofit2.Response
 
 import java.util.*
 
+const val APIKEY = BuildConfig.API_KEY
+const val REQUEST_CODE_AUTOCOMPLETE = 1
+// degree sign
+const val DEGREE: String = "\u00B0"
+
 class MainActivity : AppCompatActivity(), AnkoLogger {
 
-    private val APIKEY: String = BuildConfig.API_KEY
-    private val REQUEST_CODE_AUTOCOMPLETE = 1
-
-    // degree sign
-    private val DEGREE: String = "\u00B0"
     // mapping
     private lateinit var map: ArcGISMap
     private lateinit var mvOverlay: GraphicsOverlay
