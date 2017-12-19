@@ -10,6 +10,7 @@ android {
         applicationId "com.jdoneill.weathermap"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        multiDexEnabled true
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
 
@@ -22,7 +23,7 @@ android {
                     (project.findProperty("PLACES_API_KEY") ?: "")
         }
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
