@@ -12,7 +12,7 @@ ext {
     andSupportLibVersion = '27.0.2'
     constraintLayoutVersion = '1.0.2'
     arcgisVersion = '100.1.0'
-    playServicesVersion = '11.6.2'
+    playServicesVersion = '11.8.0'
     retrofitVersion = '2.3.0'
     leakcanaryVersion = '1.5.4'
     // plugin versions
