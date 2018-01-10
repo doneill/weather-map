@@ -115,8 +115,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         if(permFineLoc && permCoarseLoc){
             // have required permissions
             locationDisplay.startAsync()
-            val centerPnt = locationDisplay.location.position
-            weatherAtLocation(centerPnt, mvOverlay)
+            
+            if( locationDisplay.isStarted ){
+                val centerPnt = locationDisplay.location.position
+                weatherAtLocation(centerPnt, mvOverlay)
+            }
         }else{
             // request permissions at runtime
             val requestCode = 2
