@@ -251,6 +251,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray) =
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 locationDisplay.startAsync()
+                val centerPnt = locationDisplay.location.position
+                weatherAtLocation(centerPnt, mvOverlay)
             } else {
                 toast("denied")
             }
