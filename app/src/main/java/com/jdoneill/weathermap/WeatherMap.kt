@@ -13,7 +13,7 @@ class WeatherMap: Application() {
         setupLeakCanary()
     }
 
-    protected fun setupLeakCanary():RefWatcher {
+    private fun setupLeakCanary():RefWatcher {
         if (LeakCanary.isInAnalyzerProcess(this)) return RefWatcher.DISABLED
         return LeakCanary.install(this)
     }
