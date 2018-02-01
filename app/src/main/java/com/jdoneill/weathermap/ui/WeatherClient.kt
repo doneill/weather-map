@@ -32,7 +32,7 @@ class WeatherClient {
      * Get weather forecast at coordinate location
      *
      * @lat coordinate latitude
-     * @lon coordinate longitute
+     * @lon coordinate longitude
      */
     fun getWeatherForCoord(lat: Float, lon: Float): Call<Weather> {
         val network = Retrofit.Builder()
