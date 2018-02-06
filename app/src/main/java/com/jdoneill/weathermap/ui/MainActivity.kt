@@ -56,7 +56,7 @@ import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.data.Weather
 
-import kotlinx.android.synthetic.main.activity_main.fab
+import kotlinx.android.synthetic.main.activity_main.locationFab
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.content_main.mapView
 
@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // turn on/off location display
-        fab.setOnClickListener { _ ->
+        locationFab.setOnClickListener { _ ->
             if(locationDisplay.isStarted){
                 locationDisplay.stop()
             }else{
@@ -162,7 +162,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // allow fab to reposition based on attribution bar layout
-        val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+        val params = locationFab.layoutParams as CoordinatorLayout.LayoutParams
         mapView.addAttributionViewLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             val heightDelta = bottom - oldBottom
             params.bottomMargin += heightDelta
