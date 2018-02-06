@@ -248,14 +248,15 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         mapView.resume()
     }
 
-    override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray) =
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                locationDisplay.startAsync()
-                val centerPnt = locationDisplay.location.position
-                weatherAtLocation(centerPnt, mvOverlay)
-            } else {
-                toast("denied")
-            }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            locationDisplay.startAsync()
+            val centerPnt = locationDisplay.location.position
+            weatherAtLocation(centerPnt, mvOverlay)
+        } else {
+            toast("denied")
+        }
+    }
 
     /**
      * Notification on selected place
