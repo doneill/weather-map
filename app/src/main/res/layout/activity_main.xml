@@ -20,6 +20,19 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/layerFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/fab_layer_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:elevation="@dimen/fab_elevation"
+        app:fabSize="mini"
+        app:layout_anchor="@id/toolbar"
+        app:layout_anchorGravity="top|end"
+        app:srcCompat="@drawable/ic_action_layers"/>
+
     <include layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton
@@ -28,6 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_menu_mylocation" />
+        android:elevation="@dimen/fab_elevation"
+        app:srcCompat="@android:drawable/ic_menu_mylocation"
+        app:useCompatPadding="true"/>
 
 </android.support.design.widget.CoordinatorLayout>
