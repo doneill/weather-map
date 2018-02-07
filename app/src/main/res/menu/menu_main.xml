@@ -10,20 +10,4 @@
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/place_search"/>
 
-    <group android:checkableBehavior="single">
-        <item
-            android:id="@+id/layer_clear"
-            android:title="@string/layer_clear"
-            app:showAsAction="never" />
-        <item
-            android:id="@+id/layer_precip"
-            android:title="@string/layer_precip"
-            app:showAsAction="never" />
-        <item
-            android:id="@+id/layer_temp"
-            android:title="@string/layer_temp"
-            app:showAsAction="never" />
-    </group>
-
-
 </menu>
