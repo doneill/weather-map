@@ -5,7 +5,7 @@ ext {
     compileSdkVersion = 27
     buildToolsVersion = '27.0.3'
     versionCode = 0
-    versionName = '0.0.3'
+    versionName = '0.0.4'
     // app dependencies
     kotlinVersion = '1.2.21'
     ankoVersion = '0.10.4'
