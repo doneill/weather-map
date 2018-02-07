@@ -22,7 +22,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.support.annotation.NonNull
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -55,15 +54,10 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.data.Weather
+import kotlinx.android.synthetic.main.activity_main.*
 
-import kotlinx.android.synthetic.main.activity_main.fab
-import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.content_main.mapView
-
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -84,9 +78,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     private lateinit var callout: Callout
     private lateinit var locationDisplay: LocationDisplay
     // menu items
-    private lateinit var clearLayersItem: MenuItem
-    private lateinit var precipLayerItem: MenuItem
-    private lateinit var tempLayerItem: MenuItem
     private lateinit var placeSearchItem: MenuItem
     // runtime permissions
     private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -124,7 +115,51 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             // request permissions at runtime
             val requestCode = 2
             ActivityCompat.requestPermissions(this@MainActivity, reqPermissions, requestCode)
-            toast("Error in DataSourceChangedListener")
+        }
+
+        // weather layer selector
+        val weatherLayer = listOf("Clear Layers", "Precipitation", "Temperature")
+        layerFab.setOnClickListener { _ ->
+            selector("Weather Layers", weatherLayer) { _, i ->
+                when {
+                    // clear all layers
+                    weatherLayer[i] == "Clear Layers" -> map.operationalLayers.clear()
+                    // add precipitation layer
+                    weatherLayer[i] == "Precipitation" -> {
+                        map.operationalLayers.clear()
+                        // add open weather precipitation layer
+                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
+                        val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
+                        openPrecipLayer.loadAsync()
+                        openPrecipLayer.addDoneLoadingListener {
+                            if(openPrecipLayer.loadStatus == LoadStatus.LOADED){
+                                info { "Open precip layer loaded" }
+                                map.operationalLayers.add(openPrecipLayer)
+                            }
+                        }
+                        // zoom out to see layer
+                        if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+                    }
+                    // add temperature layer
+                    weatherLayer[i] == "Temperature" -> {
+                        map.operationalLayers.clear()
+                        // add open weather temperature layer
+                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
+                        val openTempLayer = WebTiledLayer(templateUri, subDomains)
+                        openTempLayer.loadAsync()
+                        openTempLayer.addDoneLoadingListener {
+                            if(openTempLayer.loadStatus == LoadStatus.LOADED){
+                                info { "Open precip layer loaded" }
+                                map.operationalLayers.add(openTempLayer)
+                            }
+                        }
+                        // zoom out to see layer
+                        if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+                    }
+                }
+            }
+
+
         }
 
         // respond to single taps on mapview
@@ -146,7 +181,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // turn on/off location display
-        fab.setOnClickListener { _ ->
+        locationFab.setOnClickListener { _ ->
             if(locationDisplay.isStarted){
                 locationDisplay.stop()
             }else{
@@ -162,7 +197,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // allow fab to reposition based on attribution bar layout
-        val params = fab.layoutParams as CoordinatorLayout.LayoutParams
+        val params = locationFab.layoutParams as CoordinatorLayout.LayoutParams
         mapView.addAttributionViewLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             val heightDelta = bottom - oldBottom
             params.bottomMargin += heightDelta
@@ -173,12 +208,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         // assign menu items
-        clearLayersItem = menu.getItem(0)
-        precipLayerItem = menu.getItem(1)
-        tempLayerItem = menu.getItem(2)
-        placeSearchItem = menu.getItem(3)
-        // set clear layers item checked by default
-        clearLayersItem.isChecked = true
+        placeSearchItem = menu.getItem(0)
 
         return true
     }
@@ -189,46 +219,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         R.id.place_search -> consume {
             // open auto complete intent
             openAutocompleteActivity()
-        }
-
-        // clear all layers
-        R.id.layer_clear -> consume{
-            map.operationalLayers.clear()
-            clearLayersItem.isChecked = true
-        }
-        // add precipitation layer
-        R.id.layer_precip -> consume{
-            map.operationalLayers.clear()
-            // add open weather precipitation layer
-            val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
-            val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
-            openPrecipLayer.loadAsync()
-            openPrecipLayer.addDoneLoadingListener {
-                if(openPrecipLayer.loadStatus == LoadStatus.LOADED){
-                    info { "Open precip layer loaded" }
-                    map.operationalLayers.add(openPrecipLayer)
-                }
-            }
-            // zoom out to see layer
-            if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
-            precipLayerItem.isChecked = true
-        }
-        // add temperature layer
-        R.id.layer_temp -> consume{
-            map.operationalLayers.clear()
-            // add open weather temperature layer
-            val templateUri = "http://{subDomain}.tile.openweathermap.org/map/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
-            val openTempLayer = WebTiledLayer(templateUri, subDomains)
-            openTempLayer.loadAsync()
-            openTempLayer.addDoneLoadingListener {
-                if(openTempLayer.loadStatus == LoadStatus.LOADED){
-                    info { "Open precip layer loaded" }
-                    map.operationalLayers.add(openTempLayer)
-                }
-            }
-            // zoom out to see layer
-            if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
-            tempLayerItem.isChecked = true
         }
         else -> super.onOptionsItemSelected(item)
     }
@@ -248,14 +238,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         mapView.resume()
     }
 
-    override fun onRequestPermissionsResult(requestCode:Int, @NonNull permissions:Array<String>, @NonNull grantResults:IntArray) =
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                locationDisplay.startAsync()
-                val centerPnt = locationDisplay.location.position
-                weatherAtLocation(centerPnt, mvOverlay)
-            } else {
-                toast("denied")
-            }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            locationDisplay.startAsync()
+        } else {
+            toast("denied")
+        }
+    }
 
     /**
      * Notification on selected place
