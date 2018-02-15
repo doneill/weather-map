@@ -9,6 +9,9 @@
 *.class
 
 # Generated files
+.project
+.settings
+.classpath
 bin/
 gen/
 out/
