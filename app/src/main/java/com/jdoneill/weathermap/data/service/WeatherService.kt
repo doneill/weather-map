@@ -10,6 +10,10 @@ import retrofit2.http.Query
  */
 interface WeatherService {
 
+    // ------------------------------------------------------------------------
+    // Public API Methods
+    // ------------------------------------------------------------------------
+
     @GET("/data/2.5/weather")
     fun weatherByCoord(@Query("units") units: String, @Query("lat") lat: Float, @Query("lon") lon:Float, @Query("APPID") apiKey: String): Call<Weather>
 }
