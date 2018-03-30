@@ -7,7 +7,7 @@ ext {
     versionCode = 0
     versionName = '0.0.4'
     // app dependencies
-    kotlinVersion = '1.2.21'
+    kotlinVersion = '1.2.30'
     ankoVersion = '0.10.4'
     andSupportLibVersion = '27.0.2'
     constraintLayoutVersion = '1.0.2'
@@ -16,5 +16,5 @@ ext {
     retrofitVersion = '2.3.0'
     leakcanaryVersion = '1.5.4'
     // plugin versions
-    gradleVersion = '3.1.0-beta2'
+    gradleVersion = '3.1.0'
 }
