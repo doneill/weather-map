@@ -1,5 +1,5 @@
 # Weather Map
-A simple Kotlin Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime Android API's.
+A Kotlin Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime Android APIs.
 
 ## Dependencies
 - [Kotlin Anko](https://github.com/Kotlin/anko)
