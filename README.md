@@ -19,7 +19,7 @@ To access the OpenWeatherMap API you need an [API Key](http://openweathermap.org
 API_KEY = "YOUR-API-KEY"
 ```
 
-## Google Places API (Optional)
+## Google Places API
 This app supports autocomplete service in the Google Places API, you must register this app project in your Google API Console and get a Google API key to add to the app. Refer to [Google](https://developers.google.com/places/android-api/signup) about signing up and getting your API keys.  Once you have your key, add it to the **gradle.properties** file created in the section above and append the key as follows:
 
 ```groovy
