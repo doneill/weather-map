@@ -31,7 +31,7 @@ android {
 dependencies {
     debugImplementation"com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
+    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
     implementation "com.android.support:appcompat-v7:$andSupportLibVersion"
     implementation "com.android.support.constraint:constraint-layout:$constraintLayoutVersion"
