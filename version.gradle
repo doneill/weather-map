@@ -16,5 +16,5 @@ ext {
     retrofitVersion = '2.3.0'
     leakcanaryVersion = '1.5.4'
     // plugin versions
-    gradleVersion = '3.2.0-alpha14'
+    gradleVersion = '3.2.0-alpha15'
 }
