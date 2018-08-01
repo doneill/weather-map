@@ -7,7 +7,6 @@ An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime
 - [Google Places API](https://developers.google.com/places/android-api/start)
 - [Open Weather Map](https://openweathermap.org/)
 - [Retrofit](http://square.github.io/retrofit/)
-- [LeakCanary](https://github.com/square/leakcanary)
 
 ## ArcGIS Runtime SDK for Android
 This app is explicitly intended for development and testing, you can become a member of the [ArcGIS Developer Program](https://developers.arcgis.com/pricing/) for free, more details about licensing your ArcGIS Runtime app can be found [here](https://developers.arcgis.com/arcgis-runtime/licensing/).
