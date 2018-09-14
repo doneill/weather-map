@@ -249,7 +249,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     /**
      * Called after the autocomplete activity has finished to return its result.
      */
-    override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent) {
+    override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // Check that the result was from the autocomplete widget.
         if (requestCode == REQUEST_CODE_AUTOCOMPLETE) when (resultCode) {
