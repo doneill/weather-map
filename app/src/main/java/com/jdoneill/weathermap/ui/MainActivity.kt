@@ -243,7 +243,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     } catch (e:GooglePlayServicesNotAvailableException) {
         // Indicates that Google Play Services is not available and the problem is not easily resolvable.
         val message = ("Google Play Services is not available: ${GoogleApiAvailability.getInstance().getErrorString(e.errorCode)}")
-        info { "PLACES: " + message }
+        info { "PLACES: $message" }
         toast(message)
     }
 
