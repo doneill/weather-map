@@ -5,10 +5,9 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.support.design.widget.CoordinatorLayout
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -180,7 +179,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // allow fab to reposition based on attribution bar layout
-        val params = locationFab.layoutParams as CoordinatorLayout.LayoutParams
+        val params = locationFab.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
         mapView.addAttributionViewLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             val heightDelta = bottom - oldBottom
             params.bottomMargin += heightDelta
@@ -243,14 +242,14 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     } catch (e:GooglePlayServicesNotAvailableException) {
         // Indicates that Google Play Services is not available and the problem is not easily resolvable.
         val message = ("Google Play Services is not available: ${GoogleApiAvailability.getInstance().getErrorString(e.errorCode)}")
-        info { "PLACES: " + message }
+        info { "PLACES: $message" }
         toast(message)
     }
 
     /**
      * Called after the autocomplete activity has finished to return its result.
      */
-    override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent) {
+    override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         // Check that the result was from the autocomplete widget.
         if (requestCode == REQUEST_CODE_AUTOCOMPLETE) when (resultCode) {
@@ -268,7 +267,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             }
             PlaceAutocomplete.RESULT_ERROR -> {
                 val status = PlaceAutocomplete.getStatus(this, data)
-                error({ "PLACES: Error: Status = $status.toString()" })
+                error { "PLACES: Error: Status = $status.toString()" }
             }
             RESULT_CANCELED -> {
                 // Indicates that the activity closed before a selection was made.
