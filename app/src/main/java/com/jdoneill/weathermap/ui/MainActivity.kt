@@ -268,7 +268,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             }
             PlaceAutocomplete.RESULT_ERROR -> {
                 val status = PlaceAutocomplete.getStatus(this, data)
-                error({ "PLACES: Error: Status = $status.toString()" })
+                error { "PLACES: Error: Status = $status.toString()" }
             }
             RESULT_CANCELED -> {
                 // Indicates that the activity closed before a selection was made.
