@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         setSupportActionBar(toolbar)
 
         // show map
-        map = ArcGISMap(Basemap.createLightGrayCanvas())
+        map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
         mapView.map = map
 
         // graphics overlay for tapped location marker
