@@ -13,7 +13,15 @@ android {
         versionCode rootProject.ext.versionCode
         versionName rootProject.ext.versionName
 
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
         buildConfigField("String", "API_KEY", API_KEY)
+    }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
     }
 
     buildTypes {
@@ -29,8 +37,6 @@ android {
 }
 
 dependencies {
-    debugImplementation"com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
     implementation "androidx.appcompat:appcompat:$andXVersion"
@@ -40,5 +46,9 @@ dependencies {
     implementation "com.google.android.gms:play-services-places:$playServicesVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    // memory leak checker
+    debugImplementation"com.squareup.leakcanary:leakcanary-android:$leakcanaryVersion"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
+    // test dependencies
     testImplementation "junit:junit:$junitVersion"
 }
