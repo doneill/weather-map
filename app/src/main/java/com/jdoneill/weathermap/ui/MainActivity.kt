@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.widget.TextView
 
-import com.esri.arcgisruntime.geometry.GeometryEngine
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReferences
 import com.esri.arcgisruntime.layers.WebTiledLayer
@@ -36,6 +35,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.data.Weather
+import com.jdoneill.weathermap.util.GeometryUtil
 import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.content_main.mapView
@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         setSupportActionBar(toolbar)
 
         // show map
-        map = ArcGISMap(Basemap.createLightGrayCanvas())
+        map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
         mapView.map = map
 
         // graphics overlay for tapped location marker
@@ -289,20 +289,12 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     /**
-     * Convert to WGS84 for lat/lon format
-     *
-     * @param mapPoint Point to convert
-     */
-    private fun convertToWgs84(mapPoint: Point) : Point =
-            GeometryEngine.project(mapPoint, SpatialReferences.getWgs84()) as Point
-
-    /**
      * Get weather from location
      *
      * @param location Location as Point
      */
     private fun weatherAtLocation(location: Point, graphicOverlay: GraphicsOverlay){
-        val wgs84Pnt = convertToWgs84(location)
+        val wgs84Pnt = GeometryUtil.convertToWgs84(location)
         val network = WeatherClient()
         val call = network.getWeatherForCoord(wgs84Pnt.y.toFloat(), wgs84Pnt.x.toFloat())
         call.enqueue(object : Callback<Weather> {
