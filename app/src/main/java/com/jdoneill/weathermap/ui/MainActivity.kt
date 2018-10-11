@@ -140,13 +140,20 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     }
                 }
             }
-
-
         }
 
-        // respond to single taps on mapview
+        // respond to mapview interactions
         mapView.onTouchListener = object: DefaultMapViewOnTouchListener(this, mapView) {
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
+                if (mapView.callout.isShowing) {
+                    mapView.callout.dismiss()
+                }
+                return super.onSingleTapConfirmed(motionEvent)
+            }
+        }
+
+        mapView.onTouchListener = object : DefaultMapViewOnTouchListener( this, mapView) {
+            override fun onLongPress(motionEvent: MotionEvent?) {
                 // clear any graphics and callouts
                 mvOverlay.graphics.clear()
                 mapView.callout.dismiss()
@@ -156,10 +163,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 val mapPoint: Point = mapView.screenToLocation(screenPoint)
                 // get the weather at tapped location
                 weatherAtLocation(mapPoint, mvOverlay)
-
-                return super.onSingleTapConfirmed(motionEvent)
+                super.onLongPress(motionEvent)
             }
-
         }
 
         // turn on/off location display
