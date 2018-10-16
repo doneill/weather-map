@@ -143,16 +143,15 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // respond to mapview interactions
-        mapView.onTouchListener = object: DefaultMapViewOnTouchListener(this, mapView) {
+        mapView.onTouchListener = object : DefaultMapViewOnTouchListener( this, mapView) {
+
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
                 if (mapView.callout.isShowing) {
                     mapView.callout.dismiss()
                 }
                 return super.onSingleTapConfirmed(motionEvent)
             }
-        }
 
-        mapView.onTouchListener = object : DefaultMapViewOnTouchListener( this, mapView) {
             override fun onLongPress(motionEvent: MotionEvent?) {
                 // clear any graphics and callouts
                 mvOverlay.graphics.clear()
