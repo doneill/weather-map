@@ -75,6 +75,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
         mapView.map = map
 
+        map.addDoneLoadingListener {
+            val centerPnt = locationDisplay.location.position
+            weatherAtLocation(centerPnt, mvOverlay)
+        }
+
         // graphics overlay for tapped location marker
         mvOverlay = addGraphicsOverlay(mapView)
 
@@ -88,11 +93,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         if(permFineLoc && permCoarseLoc){
             // have required permissions
             locationDisplay.startAsync()
-            
-            if( locationDisplay.isStarted ){
-                val centerPnt = locationDisplay.location.position
-                weatherAtLocation(centerPnt, mvOverlay)
-            }
         }else{
             // request permissions at runtime
             val requestCode = 2
@@ -143,16 +143,17 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // respond to mapview interactions
-        mapView.onTouchListener = object: DefaultMapViewOnTouchListener(this, mapView) {
+        mapView.onTouchListener = object : DefaultMapViewOnTouchListener( this, mapView) {
+
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
                 if (mapView.callout.isShowing) {
+                    // clear any graphics and callouts
+                    mvOverlay.graphics.clear()
                     mapView.callout.dismiss()
                 }
                 return super.onSingleTapConfirmed(motionEvent)
             }
-        }
 
-        mapView.onTouchListener = object : DefaultMapViewOnTouchListener( this, mapView) {
             override fun onLongPress(motionEvent: MotionEvent?) {
                 // clear any graphics and callouts
                 mvOverlay.graphics.clear()
