@@ -75,6 +75,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
         mapView.map = map
 
+        map.addDoneLoadingListener {
+            val centerPnt = locationDisplay.location.position
+            weatherAtLocation(centerPnt, mvOverlay)
+        }
+
         // graphics overlay for tapped location marker
         mvOverlay = addGraphicsOverlay(mapView)
 
@@ -88,11 +93,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         if(permFineLoc && permCoarseLoc){
             // have required permissions
             locationDisplay.startAsync()
-            
-            if( locationDisplay.isStarted ){
-                val centerPnt = locationDisplay.location.position
-                weatherAtLocation(centerPnt, mvOverlay)
-            }
         }else{
             // request permissions at runtime
             val requestCode = 2
