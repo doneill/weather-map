@@ -147,6 +147,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
                 if (mapView.callout.isShowing) {
+                    // clear any graphics and callouts
+                    mvOverlay.graphics.clear()
                     mapView.callout.dismiss()
                 }
                 return super.onSingleTapConfirmed(motionEvent)
