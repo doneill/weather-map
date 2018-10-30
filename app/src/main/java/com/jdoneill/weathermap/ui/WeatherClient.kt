@@ -8,7 +8,6 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-
 class WeatherClient {
     private val APIKEY: String = BuildConfig.API_KEY
 
