@@ -4,8 +4,8 @@ ext {
     targetSdkVersion = 28
     compileSdkVersion = 28
     buildToolsVersion = '28.0.3'
-    versionCode = 4
-    versionName = '0.0.4'
+    versionCode = 5
+    versionName = '0.0.5'
     // app dependencies
     kotlinVersion = '1.2.70'
     ankoVersion = '0.10.4'
