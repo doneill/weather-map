@@ -3,7 +3,7 @@ package com.jdoneill.weathermap.ui
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.data.Constants
 import com.jdoneill.weathermap.data.Weather
-import com.jdoneill.weathermap.data.service.WeatherService
+import com.jdoneill.weathermap.service.WeatherService
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

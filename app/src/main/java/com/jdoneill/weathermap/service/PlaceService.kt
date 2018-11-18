@@ -1,6 +1,5 @@
-package com.jdoneill.weathermap.data.service
+package com.jdoneill.weathermap.service
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 
 import okhttp3.OkHttpClient
