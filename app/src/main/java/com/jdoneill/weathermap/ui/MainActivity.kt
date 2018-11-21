@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         // weather layer selector
         val weatherLayer = listOf("Clear Layers", "Precipitation", "Temperature")
-        layerFab.setOnClickListener { _ ->
+        layerFab.setOnClickListener {
             selector("Weather Layers", weatherLayer) { _, i ->
                 when {
                     // clear all layers
@@ -210,9 +210,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
 
         // place search
-        R.id.place_search -> consume {
+        R.id.menu_search -> consume {
             // open auto complete intent
-            openAutocompleteActivity()
+            openPlaceSearchActivity()
         }
         else -> super.onOptionsItemSelected(item)
     }
@@ -318,4 +318,18 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             mapView.setViewpointCenterAsync(mapPoint, 1050000.0)
         }
     }
+
+    /**
+     * Notification on selected place
+     */
+    private fun openPlaceSearchActivity() {
+        val intent = Intent(this, PlaceSearchActivity::class.java)
+        intent.putExtra(EXTRA_LATLNG, "47.498277,-121.783975")
+        startActivity(intent)
+    }
+
+    companion object {
+        const val EXTRA_LATLNG: String = "com.jdoneill.placesearch.LATLNG"
+    }
+
 }
