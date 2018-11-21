@@ -78,6 +78,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
             // Assumes current activity is the searchable activity
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             setIconifiedByDefault(false) // Do not iconify the widget; expand it by default
+            requestFocus()
 
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
