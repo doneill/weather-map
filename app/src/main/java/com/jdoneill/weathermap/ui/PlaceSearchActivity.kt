@@ -44,7 +44,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
         mPlacesListView.setOnItemClickListener { _, _, pos, _ ->
             val mainText: String
-            var placeId: String? = ""
+            var placeId = ""
             val items = mPlacesListView.getItemAtPosition(pos)
 
             if (items is HashMap<*, *>) {
