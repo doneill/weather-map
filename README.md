@@ -6,7 +6,7 @@ An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime
 ## Dependencies
 - [Kotlin Anko](https://github.com/Kotlin/anko)
 - [ArcGIS Android](https://developers.arcgis.com/android/)
-- [Google Places API](https://developers.google.com/places/android-api/start)
+- [Google Places API](https://developers.google.com/places/web-service/intro)
 - [Open Weather Map](https://openweathermap.org/)
 - [Retrofit](http://square.github.io/retrofit/)
 
@@ -21,7 +21,7 @@ API_KEY = "YOUR-API-KEY"
 ```
 
 ## Google Places API
-This app supports autocomplete service in the Google Places API, you must register this app project in your Google API Console and get a Google API key to add to the app. Refer to [Google](https://developers.google.com/places/android-api/signup) about signing up and getting your API keys.  Once you have your key, add it to the **gradle.properties** file created in the section above and append the key as follows:
+This app supports autocomplete service in the Google Places API, you must register this app project in your Google API Console and get a Google API key to add to the app. Refer to [Google](https://developers.google.com/places/web-service/get-api-key) about signing up and getting your API keys.  Once you have your key, add it to the **gradle.properties** file created in the section above and append the key as follows:
 
 ```groovy
 ...
