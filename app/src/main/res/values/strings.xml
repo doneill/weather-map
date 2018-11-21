@@ -8,4 +8,8 @@
     <string name="layer_temp">Temperature</string>
     <!-- Callout -->
     <string name="callout_text">Name: %1$s | Temp: %2$.1f%3$s | High: %4$.1f%5$s | Low: %6$.1f%7$s</string>
+    <!-- Google Place Search -->
+    <string name="search_hint">Search</string>
+    <string name="app_label">Search … </string>
+    <string name="google_content_desc">Google Logo</string>
 </resources>
