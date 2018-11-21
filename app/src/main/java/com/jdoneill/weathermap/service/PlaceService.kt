@@ -29,6 +29,6 @@ class PlaceService {
         }
 
     companion object {
-        private val BASE_URL = "https://maps.googleapis.com/maps/"
+        private const val BASE_URL = "https://maps.googleapis.com/maps/"
     }
 }
