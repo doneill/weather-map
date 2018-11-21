@@ -1,4 +1,4 @@
-package com.jdoneill.weathermap.ui
+package com.jdoneill.weathermap.presenter
 
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.data.Constants
