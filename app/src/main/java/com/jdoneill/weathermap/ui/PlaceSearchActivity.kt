@@ -59,7 +59,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
                 }
 
             }
-            mPlaceAutocomplete.getResultFromPlaceId(placeId!!)
+            mPlaceAutocomplete.getResultFromPlaceId(placeId)
         }
 
         mPlaceAutocomplete = PlaceAutocomplete(this)
@@ -85,8 +85,8 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-                    mPlacesListView!!.visibility = View.VISIBLE
-                    mPlaceAutocomplete!!.getPredictions(newText, mLatLng!!)
+                    mPlacesListView.visibility = View.VISIBLE
+                    mPlaceAutocomplete.getPredictions(newText, mLatLng)
                     return false
                 }
             })
@@ -101,10 +101,10 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
         val places = ArrayList<HashMap<String, String>>()
         var results: HashMap<String, String>
 
-        for (i in 0 until mPredictions!!.size) {
+        for (i in 0 until mPredictions.size) {
             results = HashMap()
-            results["place"] = mPredictions!![i].structuredFormatting.mainText
-            results["desc"] = mPredictions!![i].structuredFormatting.secondaryText
+            results["place"] = mPredictions[i].structuredFormatting.mainText
+            results["desc"] = mPredictions[i].structuredFormatting.secondaryText
             places.add(results)
         }
 
