@@ -1,14 +1,14 @@
 package com.jdoneill.weathermap.model
 
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName
 
 class Location {
     @SerializedName("lat")
     @Expose
-    val lat:Double? = null
+    val lat:Double = 0.0
 
     @SerializedName("lng")
     @Expose
-    val lng:Double? = null
+    val lng:Double = 0.0
 }
