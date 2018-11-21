@@ -5,24 +5,12 @@ import com.google.gson.annotations.SerializedName
 
 class Predictions {
 
-    @SerializedName("description")
-    @Expose
-    var description: String? = null
-
-    @SerializedName("id")
-    @Expose
-    var id: String? = null
-
     @SerializedName("place_id")
     @Expose
-    val placeId: String? = null
-
-    @SerializedName("reference")
-    @Expose
-    var reference: String? = null
+    val placeId: String = ""
 
     @SerializedName("structured_formatting")
     @Expose
-    val structuredFormatting: StructuredFormatting? = null
+    lateinit var structuredFormatting: StructuredFormatting
 
 }
