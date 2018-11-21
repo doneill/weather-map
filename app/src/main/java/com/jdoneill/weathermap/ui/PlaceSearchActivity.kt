@@ -24,10 +24,10 @@ import androidx.appcompat.widget.Toolbar
 
 class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
-    lateinit var mPlaceAutocomplete: PlaceAutocomplete
-    lateinit var mPredictions: List<Predictions>
-    lateinit var mPlacesListView: ListView
-    lateinit var mLatLng: String
+    private lateinit var mPlaceAutocomplete: PlaceAutocomplete
+    private lateinit var mPredictions: List<Predictions>
+    private lateinit var mPlacesListView: ListView
+    private lateinit var mLatLng: String
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
