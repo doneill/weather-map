@@ -2,7 +2,6 @@ package com.jdoneill.weathermap.data
 
 import com.google.gson.annotations.SerializedName
 
-
 class Weather{
 
     @SerializedName("name")
