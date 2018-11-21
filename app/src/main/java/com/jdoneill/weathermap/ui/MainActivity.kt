@@ -71,20 +71,33 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        val extras = getIntent().getExtras()
+
         // show map
         map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
         mapView.map = map
-
-        map.addDoneLoadingListener {
-            val centerPnt = locationDisplay.location.position
-            weatherAtLocation(centerPnt, mvOverlay)
-        }
 
         // graphics overlay for tapped location marker
         mvOverlay = addGraphicsOverlay(mapView)
 
         // get the MapView location display
         locationDisplay = mapView.locationDisplay
+
+        if (extras != null) {
+            val lat:Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE)
+            val lon:Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE)
+            mvOverlay.graphics.clear()
+            mapView.callout.dismiss()
+            // create arcgis point
+            val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
+            // get the weather
+            weatherAtLocation(placePnt, mvOverlay)
+        } else {
+            map.addDoneLoadingListener {
+                val centerPnt = locationDisplay.location.position
+                weatherAtLocation(centerPnt, mvOverlay)
+            }
+        }
 
         // permission state
         val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
@@ -231,53 +244,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             locationDisplay.startAsync()
         } else {
             toast("denied")
-        }
-    }
-
-    /**
-     * Notification on selected place
-     */
-    private fun openAutocompleteActivity() = try {
-        // The autocomplete activity requires Google Play Services to be available. The intent
-        // builder checks this and throws an exception if it is not the case.
-        val intent = PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN).build(this)
-        startActivityForResult(intent, REQUEST_CODE_AUTOCOMPLETE)
-    } catch (e:GooglePlayServicesRepairableException) {
-        // Indicates that Google Play Services is either not installed or not up to date.
-        GoogleApiAvailability.getInstance().getErrorDialog(this, e.connectionStatusCode, 0 /* requestCode */).show()
-    } catch (e:GooglePlayServicesNotAvailableException) {
-        // Indicates that Google Play Services is not available and the problem is not easily resolvable.
-        val message = ("Google Play Services is not available: ${GoogleApiAvailability.getInstance().getErrorString(e.errorCode)}")
-        info { "PLACES: $message" }
-        toast(message)
-    }
-
-    /**
-     * Called after the autocomplete activity has finished to return its result.
-     */
-    override fun onActivityResult(requestCode:Int, resultCode:Int, data:Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        // Check that the result was from the autocomplete widget.
-        if (requestCode == REQUEST_CODE_AUTOCOMPLETE) when (resultCode) {
-            RESULT_OK -> {
-                mvOverlay.graphics.clear()
-                mapView.callout.dismiss()
-                // Get the user's selected place from the Intent.
-                val place = PlaceAutocomplete.getPlace(this, data)
-                // get lat/lon of searched place
-                val latLng = place.latLng
-                // create arcgis point
-                val placePnt = Point(latLng.longitude, latLng.latitude, SpatialReferences.getWgs84())
-                // get the weather
-                weatherAtLocation(placePnt, mvOverlay)
-            }
-            PlaceAutocomplete.RESULT_ERROR -> {
-                val status = PlaceAutocomplete.getStatus(this, data)
-                error { "PLACES: Error: Status = $status.toString()" }
-            }
-            RESULT_CANCELED -> {
-                // Indicates that the activity closed before a selection was made.
-            }
         }
     }
 
