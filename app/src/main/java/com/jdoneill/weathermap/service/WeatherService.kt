@@ -1,4 +1,4 @@
-package com.jdoneill.weathermap.data.service
+package com.jdoneill.weathermap.service
 
 import com.jdoneill.weathermap.data.Weather
 import retrofit2.Call
