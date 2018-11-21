@@ -7,10 +7,10 @@ class StructuredFormatting {
 
     @SerializedName("main_text")
     @Expose
-    val mainText: String? = null
+    val mainText: String = ""
 
     @SerializedName("secondary_text")
     @Expose
-    val secondaryText: String? = null
+    val secondaryText: String = ""
 
 }
