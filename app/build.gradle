@@ -16,6 +16,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "API_KEY", API_KEY)
+        buildConfigField("String", "PLACES_API_KEY", PLACES_API_KEY)
     }
 
     testOptions {
@@ -25,10 +26,6 @@ android {
     }
 
     buildTypes {
-        debug{
-            resValue "string", "google_maps_api_key",
-                    (project.findProperty("PLACES_API_KEY") ?: "")
-        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -43,7 +40,6 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation "com.google.android.material:material:$andXVersion"
     implementation "com.esri.arcgisruntime:arcgis-android:$arcgisVersion"
-    implementation "com.google.android.gms:play-services-places:$playServicesVersion"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
     implementation "com.squareup.okhttp3:okhttp:$okhttpVersion"
