@@ -42,24 +42,24 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
         mPlacesListView = findViewById(R.id.lvPlaces)
 
-        mPlacesListView!!.setOnItemClickListener { _, _, pos, _ ->
+        mPlacesListView.setOnItemClickListener { _, _, pos, _ ->
             val mainText: String
             var placeId: String? = ""
-            val items = mPlacesListView!!.getItemAtPosition(pos)
+            val items = mPlacesListView.getItemAtPosition(pos)
 
             if (items is HashMap<*, *>) {
 
                 val item = items.entries.iterator().next()
                 mainText = item.value as String
 
-                for (i in mPredictions!!.indices) {
-                    if (mainText == mPredictions!![i].structuredFormatting.mainText) {
-                        placeId = mPredictions!![i].placeId
+                for (i in mPredictions.indices) {
+                    if (mainText == mPredictions[i].structuredFormatting.mainText) {
+                        placeId = mPredictions[i].placeId
                     }
                 }
 
             }
-            mPlaceAutocomplete!!.getResultFromPlaceId(placeId!!)
+            mPlaceAutocomplete.getResultFromPlaceId(placeId!!)
         }
 
         mPlaceAutocomplete = PlaceAutocomplete(this)
