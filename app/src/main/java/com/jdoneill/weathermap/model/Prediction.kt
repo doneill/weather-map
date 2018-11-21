@@ -7,6 +7,6 @@ class Prediction {
 
     @SerializedName("predictions")
     @Expose
-    val predictions: List<Predictions>? = null
+    lateinit var predictions: List<Predictions>
 
 }

@@ -6,6 +6,6 @@ import com.google.gson.annotations.SerializedName
 class Result {
     @SerializedName("geometry")
     @Expose
-    var geometry: Geometry? = null
+    lateinit var geometry: Geometry
 
 }
