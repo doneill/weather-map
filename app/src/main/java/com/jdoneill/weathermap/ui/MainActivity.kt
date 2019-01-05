@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        val extras = getIntent().getExtras()
+        val extras = intent.extras
 
         // show map
         map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
