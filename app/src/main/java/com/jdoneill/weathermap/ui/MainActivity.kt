@@ -175,7 +175,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // turn on/off location display
-        locationFab.setOnClickListener { _ ->
+        locationFab.setOnClickListener {
             if(locationDisplay.isStarted){
                 locationDisplay.stop()
             }else{
