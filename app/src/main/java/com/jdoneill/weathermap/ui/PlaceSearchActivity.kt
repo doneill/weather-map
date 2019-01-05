@@ -114,7 +114,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
                 arrayOf("place", "desc"),
                 intArrayOf(android.R.id.text1, android.R.id.text2))
 
-        mPlacesListView!!.adapter = adapter
+        mPlacesListView.adapter = adapter
     }
 
     override fun getResult(result: Result) {
