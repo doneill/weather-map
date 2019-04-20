@@ -28,6 +28,8 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
     private lateinit var mPredictions: List<Predictions>
     private lateinit var mPlacesListView: ListView
     private lateinit var mLatLng: String
+    private lateinit var mPlaceName: String
+    private lateinit var mDesc: String
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,18 +45,23 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
         mPlacesListView = findViewById(R.id.lvPlaces)
 
         mPlacesListView.setOnItemClickListener { _, _, pos, _ ->
-            val mainText: String
             var placeId = ""
             val items = mPlacesListView.getItemAtPosition(pos)
 
             if (items is HashMap<*, *>) {
-
-                val item = items.entries.iterator().next()
-                mainText = item.value as String
+                for (item in items.entries) {
+                    if (item.key.equals("place")) {
+                        mPlaceName = item.value as String
+                    } else if (item.key.equals("desc")) {
+                        mDesc = item.value as String
+                    }
+                }
 
                 for (i in mPredictions.indices) {
-                    if (mainText == mPredictions[i].structuredFormatting.mainText) {
+                    if (mPlaceName == mPredictions[i].structuredFormatting.mainText &&
+                            mDesc == mPredictions[i].structuredFormatting.secondaryText) {
                         placeId = mPredictions[i].placeId
+                        break
                     }
                 }
 
