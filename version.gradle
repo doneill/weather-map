@@ -19,5 +19,5 @@ ext {
     // test dependencies
     junitVersion = '4.12'
     // plugin versions
-    gradleVersion = '3.5.0-alpha10'
+    gradleVersion = '3.5.0-alpha12'
 }
