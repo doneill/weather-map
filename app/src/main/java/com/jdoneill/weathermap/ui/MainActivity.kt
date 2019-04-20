@@ -315,7 +315,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         if(mapScale < 350000.0){
             mapView.setViewpointCenterAsync(mapPoint)
         }else{
-            mapView.setViewpointCenterAsync(mapPoint, 1050000.0)
+            mapView.setViewpointCenterAsync(mapPoint, 10500.0)
         }
     }
 
