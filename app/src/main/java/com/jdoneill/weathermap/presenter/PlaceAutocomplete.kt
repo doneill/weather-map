@@ -15,7 +15,7 @@ class PlaceAutocomplete(private val mListener: PlacesListener) {
     fun getPredictions(text: String, latLng: String) {
         placeService
                 .api
-                .getPredictions(APIKEY, text, latLng, "500")
+                .getPredictions(APIKEY, text, latLng, "100")
                 .enqueue(object : Callback<Prediction> {
                     override fun onResponse(call: Call<Prediction>, response: Response<Prediction>) {
                         if (response.isSuccessful) {
