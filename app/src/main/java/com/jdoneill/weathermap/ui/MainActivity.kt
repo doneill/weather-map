@@ -48,10 +48,10 @@ const val DEGREE: String = "\u00B0"
 class MainActivity : AppCompatActivity(), AnkoLogger {
 
     // mapping
-    private lateinit var map: ArcGISMap
-    private lateinit var mvOverlay: GraphicsOverlay
-    private lateinit var callout: Callout
-    private lateinit var locationDisplay: LocationDisplay
+    private lateinit var mMap: ArcGISMap
+    private lateinit var mOverlay: GraphicsOverlay
+    private lateinit var mCallout: Callout
+    private lateinit var mLocationDisplay: LocationDisplay
     // menu items
     private lateinit var placeSearchItem: MenuItem
     // runtime permissions
@@ -66,29 +66,29 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         val extras = intent.extras
 
-        // show map
-        map = ArcGISMap(Basemap.createDarkGrayCanvasVector())
-        mapView.map = map
+        // show mMap
+        mMap = ArcGISMap(Basemap.createDarkGrayCanvasVector())
+        mapView.map = mMap
 
         // graphics overlay for tapped location marker
-        mvOverlay = addGraphicsOverlay(mapView)
+        mOverlay = addGraphicsOverlay(mapView)
 
         // get the MapView location display
-        locationDisplay = mapView.locationDisplay
+        mLocationDisplay = mapView.locationDisplay
 
         if (extras != null) {
             val lat:Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE)
             val lon:Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE)
-            mvOverlay.graphics.clear()
+            mOverlay.graphics.clear()
             mapView.callout.dismiss()
             // create arcgis point
             val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
             // get the weather
-            weatherAtLocation(placePnt, mvOverlay)
+            weatherAtLocation(placePnt, mOverlay)
         } else {
-            map.addDoneLoadingListener {
-                val centerPnt = locationDisplay.location.position
-                weatherAtLocation(centerPnt, mvOverlay)
+            mMap.addDoneLoadingListener {
+                val centerPnt = mLocationDisplay.location.position
+                weatherAtLocation(centerPnt, mOverlay)
             }
         }
 
@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         // check if permissions needed
         if(permFineLoc && permCoarseLoc){
             // have required permissions
-            locationDisplay.startAsync()
+            mLocationDisplay.startAsync()
         }else{
             // request permissions at runtime
             val requestCode = 2
@@ -111,18 +111,18 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             selector("Weather Layers", weatherLayer) { _, i ->
                 when {
                     // clear all layers
-                    weatherLayer[i] == "Clear Layers" -> map.operationalLayers.clear()
+                    weatherLayer[i] == "Clear Layers" -> mMap.operationalLayers.clear()
                     // add precipitation layer
                     weatherLayer[i] == "Precipitation" -> {
-                        map.operationalLayers.clear()
+                        mMap.operationalLayers.clear()
                         // add open weather precipitation layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
+                        val templateUri = "http://{subDomain}.tile.openweathermap.org/mMap/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
                         val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
                         openPrecipLayer.loadAsync()
                         openPrecipLayer.addDoneLoadingListener {
                             if(openPrecipLayer.loadStatus == LoadStatus.LOADED){
                                 info { "Open precip layer loaded" }
-                                map.operationalLayers.add(openPrecipLayer)
+                                mMap.operationalLayers.add(openPrecipLayer)
                             }
                         }
                         // zoom out to see layer
@@ -130,15 +130,15 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     }
                     // add temperature layer
                     weatherLayer[i] == "Temperature" -> {
-                        map.operationalLayers.clear()
+                        mMap.operationalLayers.clear()
                         // add open weather temperature layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
+                        val templateUri = "http://{subDomain}.tile.openweathermap.org/mMap/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
                         val openTempLayer = WebTiledLayer(templateUri, subDomains)
                         openTempLayer.loadAsync()
                         openTempLayer.addDoneLoadingListener {
                             if(openTempLayer.loadStatus == LoadStatus.LOADED){
                                 info { "Open precip layer loaded" }
-                                map.operationalLayers.add(openTempLayer)
+                                mMap.operationalLayers.add(openTempLayer)
                             }
                         }
                         // zoom out to see layer
@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
                 if (mapView.callout.isShowing) {
                     // clear any graphics and callouts
-                    mvOverlay.graphics.clear()
+                    mOverlay.graphics.clear()
                     mapView.callout.dismiss()
                 }
                 return super.onSingleTapConfirmed(motionEvent)
@@ -162,31 +162,31 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
             override fun onLongPress(motionEvent: MotionEvent?) {
                 // clear any graphics and callouts
-                mvOverlay.graphics.clear()
+                mOverlay.graphics.clear()
                 mapView.callout.dismiss()
-                // get the point that was clicked and convert it to a point in map coordinates
+                // get the point that was clicked and convert it to a point in mMap coordinates
                 val screenPoint: android.graphics.Point = android.graphics.Point(motionEvent!!.x.toInt(), motionEvent.y.toInt())
-                // create a map point from screen point
+                // create a mMap point from screen point
                 val mapPoint: Point = mapView.screenToLocation(screenPoint)
                 // get the weather at tapped location
-                weatherAtLocation(mapPoint, mvOverlay)
+                weatherAtLocation(mapPoint, mOverlay)
                 super.onLongPress(motionEvent)
             }
         }
 
         // turn on/off location display
         locationFab.setOnClickListener {
-            if(locationDisplay.isStarted){
-                locationDisplay.stop()
+            if(mLocationDisplay.isStarted){
+                mLocationDisplay.stop()
             }else{
                 // clear any graphics and callouts
-                mvOverlay.graphics.clear()
+                mOverlay.graphics.clear()
                 mapView.callout.dismiss()
                 // start location display
-                locationDisplay.startAsync()
+                mLocationDisplay.startAsync()
                 // zoom to location and display weather
-                val centerPnt = locationDisplay.location.position
-                weatherAtLocation(centerPnt, mvOverlay)
+                val centerPnt = mLocationDisplay.location.position
+                weatherAtLocation(centerPnt, mOverlay)
             }
         }
 
@@ -234,7 +234,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            locationDisplay.startAsync()
+            mLocationDisplay.startAsync()
         } else {
             toast("denied")
         }
@@ -299,17 +299,17 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val locationGraphic = Graphic(mapPoint, locationMarker)
         dataOverlay.graphics.add(locationGraphic)
 
-        // create a textview for the callout
+        // create a textview for the mCallout
         val calloutContent = TextView(applicationContext)
         calloutContent.setTextColor(Color.BLACK)
         // create text from string resource
         val calloutText = getString(R.string.callout_text, cityName, temp, DEGREE, highTemp, DEGREE, lowTemp, DEGREE)
         calloutContent.text = calloutText
-        // get callout, set content and geoelement graphic
-        callout = mapView.callout
-        callout.content = calloutContent
-        callout.setGeoElement(locationGraphic, mapPoint)
-        callout.show()
+        // get mCallout, set content and geoelement graphic
+        mCallout = mapView.callout
+        mCallout.content = calloutContent
+        mCallout.setGeoElement(locationGraphic, mapPoint)
+        mCallout.show()
         // center on the location, zoom in when scaled out
         val mapScale = mapView.mapScale
         if(mapScale < 350000.0){
