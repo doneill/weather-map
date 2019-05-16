@@ -324,7 +324,12 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
      */
     private fun openPlaceSearchActivity() {
         val intent = Intent(this, PlaceSearchActivity::class.java)
-        intent.putExtra(EXTRA_LATLNG, "47.498277,-121.783975")
+
+        val centerPnt = GeometryUtil.convertToWgs84(mapView.visibleArea.extent.center)
+        val lat = centerPnt.x.toString()
+        val lon = centerPnt.y.toString()
+
+        intent.putExtra(EXTRA_LATLNG, "$lat, $lon")
         startActivity(intent)
     }
 
