@@ -19,7 +19,12 @@ import com.esri.arcgisruntime.layers.WebTiledLayer
 import com.esri.arcgisruntime.loadable.LoadStatus
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.esri.arcgisruntime.mapping.Basemap
-import com.esri.arcgisruntime.mapping.view.*
+import com.esri.arcgisruntime.mapping.view.Callout
+import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener
+import com.esri.arcgisruntime.mapping.view.Graphic
+import com.esri.arcgisruntime.mapping.view.GraphicsOverlay
+import com.esri.arcgisruntime.mapping.view.LocationDisplay
+import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
 
 import com.jdoneill.weathermap.BuildConfig
@@ -67,7 +72,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val extras = intent.extras
 
         // show mMap
-        mMap = ArcGISMap(Basemap.createDarkGrayCanvasVector())
+        mMap = ArcGISMap(Basemap.createLightGrayCanvasVector())
         mapView.map = mMap
 
         // graphics overlay for tapped location marker
