@@ -264,7 +264,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
      * @param location Location as Point
      */
     private fun weatherAtLocation(location: Point, graphicOverlay: GraphicsOverlay){
-        val wgs84Pnt = GeometryUtil.convertToWgs84(location)
+        // check incoming location sr for api compatibility
+        val wgs84Pnt = if (location.spatialReference != SpatialReferences.getWgs84()) {
+            GeometryUtil.convertToWgs84(location)
+        } else {
+            location
+        }
+        
         val network = WeatherClient()
         val call = network.getWeatherForCoord(wgs84Pnt.y.toFloat(), wgs84Pnt.x.toFloat())
         call.enqueue(object : Callback<Weather> {
