@@ -18,6 +18,8 @@ ext {
     leakcanaryVersion = '1.5.4'
     // test dependencies
     junitVersion = '4.12'
+    andXJunitVersion = '1.1.1'
+    archLifecycleVersion = '2.0.0'
     // plugin versions
     gradleVersion = '3.5.0-beta03'
 }

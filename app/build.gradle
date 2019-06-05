@@ -54,6 +54,8 @@ dependencies {
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakcanaryVersion"
     // test dependencies
     testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$andXJunitVersion"
+    androidTestImplementation "androidx.arch.core:core-testing:$rootProject.archLifecycleVersion"
 }
 
 task runDebugApp(type: Exec) {
