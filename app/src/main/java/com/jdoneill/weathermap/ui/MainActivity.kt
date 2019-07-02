@@ -306,7 +306,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val lowTemp = main.maxTemp
 
         // create a marker at tapped location
-        val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CROSS, Color.BLACK, 15.0f)
+        val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 15.0f)
         val locationGraphic = Graphic(mapPoint, locationMarker)
         dataOverlay.graphics.add(locationGraphic)
 
