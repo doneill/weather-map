@@ -121,11 +121,11 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     weatherLayer[i] == "Precipitation" -> {
                         mMap.operationalLayers.clear()
                         // add open weather precipitation layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/mMap/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
+                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
                         val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
                         openPrecipLayer.loadAsync()
                         openPrecipLayer.addDoneLoadingListener {
-                            if(openPrecipLayer.loadStatus == LoadStatus.LOADED){
+                            if ( openPrecipLayer.loadStatus == LoadStatus.LOADED ) {
                                 info { "Open precip layer loaded" }
                                 mMap.operationalLayers.add(openPrecipLayer)
                             }
@@ -137,7 +137,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     weatherLayer[i] == "Temperature" -> {
                         mMap.operationalLayers.clear()
                         // add open weather temperature layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/mMap/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
+                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
                         val openTempLayer = WebTiledLayer(templateUri, subDomains)
                         openTempLayer.loadAsync()
                         openTempLayer.addDoneLoadingListener {
