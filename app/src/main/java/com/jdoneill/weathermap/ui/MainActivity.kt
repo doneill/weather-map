@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     // runtime permissions
     private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     // subdomains for web tiled layer
-    private var subDomains = Arrays.asList("a")
+    private var subDomains = listOf("a")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
         val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) == PackageManager.PERMISSION_GRANTED)
         // check if permissions needed
-        if(permFineLoc && permCoarseLoc){
+        if (permFineLoc && permCoarseLoc) {
             // have required permissions
             mLocationDisplay.startAsync()
         }else{
@@ -121,33 +121,33 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     weatherLayer[i] == "Precipitation" -> {
                         mMap.operationalLayers.clear()
                         // add open weather precipitation layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/mMap/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
+                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
                         val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
                         openPrecipLayer.loadAsync()
                         openPrecipLayer.addDoneLoadingListener {
-                            if(openPrecipLayer.loadStatus == LoadStatus.LOADED){
+                            if ( openPrecipLayer.loadStatus == LoadStatus.LOADED ) {
                                 info { "Open precip layer loaded" }
                                 mMap.operationalLayers.add(openPrecipLayer)
                             }
                         }
                         // zoom out to see layer
-                        if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+                        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
                     }
                     // add temperature layer
                     weatherLayer[i] == "Temperature" -> {
                         mMap.operationalLayers.clear()
                         // add open weather temperature layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/mMap/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
+                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
                         val openTempLayer = WebTiledLayer(templateUri, subDomains)
                         openTempLayer.loadAsync()
                         openTempLayer.addDoneLoadingListener {
-                            if(openTempLayer.loadStatus == LoadStatus.LOADED){
+                            if (openTempLayer.loadStatus == LoadStatus.LOADED) {
                                 info { "Open precip layer loaded" }
                                 mMap.operationalLayers.add(openTempLayer)
                             }
                         }
                         // zoom out to see layer
-                        if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+                        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
                     }
                 }
             }
@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         // turn on/off location display
         locationFab.setOnClickListener {
-            if(mLocationDisplay.isStarted){
+            if (mLocationDisplay.isStarted) {
                 mLocationDisplay.stop()
             }else{
                 // clear any graphics and callouts
@@ -323,7 +323,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         mCallout.show()
         // center on the location, zoom in when scaled out
         val mapScale = mapView.mapScale
-        if(mapScale < 350000.0){
+        if (mapScale < 350000.0) {
             mapView.setViewpointCenterAsync(mapPoint)
         }else{
             mapView.setViewpointCenterAsync(mapPoint, 10500.0)
