@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     // runtime permissions
     private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     // subdomains for web tiled layer
-    private var subDomains = Arrays.asList("a")
+    private var subDomains = listOf("a")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
