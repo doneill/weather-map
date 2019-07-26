@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
         val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) == PackageManager.PERMISSION_GRANTED)
         // check if permissions needed
-        if(permFineLoc && permCoarseLoc){
+        if (permFineLoc && permCoarseLoc) {
             // have required permissions
             mLocationDisplay.startAsync()
         }else{
@@ -131,7 +131,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                             }
                         }
                         // zoom out to see layer
-                        if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+                        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
                     }
                     // add temperature layer
                     weatherLayer[i] == "Temperature" -> {
@@ -141,13 +141,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                         val openTempLayer = WebTiledLayer(templateUri, subDomains)
                         openTempLayer.loadAsync()
                         openTempLayer.addDoneLoadingListener {
-                            if(openTempLayer.loadStatus == LoadStatus.LOADED){
+                            if (openTempLayer.loadStatus == LoadStatus.LOADED) {
                                 info { "Open precip layer loaded" }
                                 mMap.operationalLayers.add(openTempLayer)
                             }
                         }
                         // zoom out to see layer
-                        if(mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+                        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
                     }
                 }
             }
@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         // turn on/off location display
         locationFab.setOnClickListener {
-            if(mLocationDisplay.isStarted){
+            if (mLocationDisplay.isStarted) {
                 mLocationDisplay.stop()
             }else{
                 // clear any graphics and callouts
@@ -323,7 +323,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         mCallout.show()
         // center on the location, zoom in when scaled out
         val mapScale = mapView.mapScale
-        if(mapScale < 350000.0){
+        if (mapScale < 350000.0) {
             mapView.setViewpointCenterAsync(mapPoint)
         }else{
             mapView.setViewpointCenterAsync(mapPoint, 10500.0)
