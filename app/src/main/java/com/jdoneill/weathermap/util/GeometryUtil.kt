@@ -12,7 +12,7 @@ class GeometryUtil {
          * @param mapPoint Point to convert
          */
         @JvmStatic
-        fun convertToWgs84(mapPoint: Point) : Point =
+        fun convertToWgs84(mapPoint: Point): Point =
                 GeometryEngine.project(mapPoint, SpatialReferences.getWgs84()) as Point
     }
 }

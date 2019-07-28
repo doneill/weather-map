@@ -7,5 +7,4 @@ class PlaceDetails {
     @SerializedName("result")
     @Expose
     var result: Result? = null
-
 }

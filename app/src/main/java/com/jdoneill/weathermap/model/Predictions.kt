@@ -12,5 +12,4 @@ class Predictions {
     @SerializedName("structured_formatting")
     @Expose
     lateinit var structuredFormatting: StructuredFormatting
-
 }

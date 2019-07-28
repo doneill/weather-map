@@ -12,5 +12,4 @@ class StructuredFormatting {
     @SerializedName("secondary_text")
     @Expose
     val secondaryText: String = ""
-
 }

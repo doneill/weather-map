@@ -2,7 +2,7 @@ package com.jdoneill.weathermap.data
 
 import com.google.gson.annotations.SerializedName
 
-class Weather{
+class Weather {
 
     @SerializedName("name")
     var name: String = ""
@@ -11,7 +11,7 @@ class Weather{
     var sys: Sys = Sys()
 }
 
-class Main{
+class Main {
     var temp: Float = 0.0f
     @SerializedName("temp_max")
     var minTemp: Float = 0.0f
@@ -19,7 +19,7 @@ class Main{
     var maxTemp: Float = 0.0f
 }
 
-class Sys{
+class Sys {
     @SerializedName("sunrise")
     var sunrise: Long = 0
     @SerializedName("sunset")

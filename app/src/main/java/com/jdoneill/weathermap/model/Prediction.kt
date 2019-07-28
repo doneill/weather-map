@@ -8,5 +8,4 @@ class Prediction {
     @SerializedName("predictions")
     @Expose
     lateinit var predictions: List<Predictions>
-
 }

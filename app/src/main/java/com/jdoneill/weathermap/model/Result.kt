@@ -7,5 +7,4 @@ class Result {
     @SerializedName("geometry")
     @Expose
     lateinit var geometry: Geometry
-
 }
