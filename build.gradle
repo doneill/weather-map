@@ -13,12 +13,17 @@ buildscript {
     }
 }
 
+plugins {
+    id "org.jlleitschuh.gradle.ktlint" version "7.1.0"
+}
+
 allprojects {
     repositories {
         google()
         jcenter()
         maven { url 'https://esri.bintray.com/arcgis' }
     }
+    apply plugin: "org.jlleitschuh.gradle.ktlint"
 }
 
 task clean(type: Delete) {
