@@ -44,7 +44,6 @@ import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 
 const val APIKEY = BuildConfig.API_KEY
 // degree sign
@@ -82,8 +81,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         mLocationDisplay = mapView.locationDisplay
 
         if (extras != null) {
-            val lat:Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE)
-            val lon:Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE)
+            val lat: Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE)
+            val lon: Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE)
             mOverlay.graphics.clear()
             mapView.callout.dismiss()
             // create arcgis point
@@ -104,7 +103,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         if (permFineLoc && permCoarseLoc) {
             // have required permissions
             mLocationDisplay.startAsync()
-        }else{
+        } else {
             // request permissions at runtime
             val requestCode = 2
             ActivityCompat.requestPermissions(this@MainActivity, reqPermissions, requestCode)
@@ -125,7 +124,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                         val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
                         openPrecipLayer.loadAsync()
                         openPrecipLayer.addDoneLoadingListener {
-                            if ( openPrecipLayer.loadStatus == LoadStatus.LOADED ) {
+                            if (openPrecipLayer.loadStatus == LoadStatus.LOADED) {
                                 info { "Open precip layer loaded" }
                                 mMap.operationalLayers.add(openPrecipLayer)
                             }
@@ -154,7 +153,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // respond to mapview interactions
-        mapView.onTouchListener = object : DefaultMapViewOnTouchListener( this, mapView) {
+        mapView.onTouchListener = object : DefaultMapViewOnTouchListener(this, mapView) {
 
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
                 if (mapView.callout.isShowing) {
@@ -183,7 +182,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         locationFab.setOnClickListener {
             if (mLocationDisplay.isStarted) {
                 mLocationDisplay.stop()
-            }else{
+            } else {
                 // clear any graphics and callouts
                 mOverlay.graphics.clear()
                 mapView.callout.dismiss()
@@ -222,7 +221,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         else -> super.onOptionsItemSelected(item)
     }
 
-    private inline fun consume(f: () -> Unit): Boolean{
+    private inline fun consume(f: () -> Unit): Boolean {
         f()
         return true
     }
@@ -237,7 +236,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         mapView.resume()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             mLocationDisplay.startAsync()
         } else {
@@ -250,7 +249,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
      *
      * @param mapView MapView to add the graphics overlay to
      */
-    private fun addGraphicsOverlay(mapView: MapView) : GraphicsOverlay {
+    private fun addGraphicsOverlay(mapView: MapView): GraphicsOverlay {
         // create graphics overlay
         val graphicsOverlay = GraphicsOverlay()
         // add overlay to MapView
@@ -263,14 +262,14 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
      *
      * @param location Location as Point
      */
-    private fun weatherAtLocation(location: Point, graphicOverlay: GraphicsOverlay){
+    private fun weatherAtLocation(location: Point, graphicOverlay: GraphicsOverlay) {
         // check incoming location sr for api compatibility
         val wgs84Pnt = if (location.spatialReference != SpatialReferences.getWgs84()) {
             GeometryUtil.convertToWgs84(location)
         } else {
             location
         }
-        
+
         val network = WeatherClient()
         val call = network.getWeatherForCoord(wgs84Pnt.y.toFloat(), wgs84Pnt.x.toFloat())
         call.enqueue(object : Callback<Weather> {
@@ -299,7 +298,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
      * @param mapPoint location to show Callout
      * @param dataOverlay GraphicsOverlay to add Marker
      */
-    private fun presentData(weather: Weather, mapPoint: Point, dataOverlay: GraphicsOverlay) = with(weather){
+    private fun presentData(weather: Weather, mapPoint: Point, dataOverlay: GraphicsOverlay) = with(weather) {
         val cityName = name
         val temp = main.temp
         val highTemp = main.minTemp
@@ -325,7 +324,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val mapScale = mapView.mapScale
         if (mapScale < 350000.0) {
             mapView.setViewpointCenterAsync(mapPoint)
-        }else{
+        } else {
             mapView.setViewpointCenterAsync(mapPoint, 10500.0)
         }
     }
@@ -347,5 +346,4 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     companion object {
         const val EXTRA_LATLNG: String = "com.jdoneill.placesearch.LATLNG"
     }
-
 }

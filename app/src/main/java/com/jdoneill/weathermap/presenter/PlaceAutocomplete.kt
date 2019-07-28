@@ -32,7 +32,6 @@ class PlaceAutocomplete(private val mListener: PlacesListener) {
                         } catch (e: InterruptedException) {
                             e.printStackTrace()
                         }
-
                     }
                 })
     }
@@ -57,7 +56,6 @@ class PlaceAutocomplete(private val mListener: PlacesListener) {
                         } catch (e: InterruptedException) {
                             e.printStackTrace()
                         }
-
                     }
                 })
     }
@@ -65,5 +63,4 @@ class PlaceAutocomplete(private val mListener: PlacesListener) {
     companion object {
         private const val APIKEY = BuildConfig.PLACES_API_KEY
     }
-
 }

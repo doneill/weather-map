@@ -6,9 +6,9 @@ import com.google.gson.annotations.SerializedName
 class Location {
     @SerializedName("lat")
     @Expose
-    val lat:Double = 0.0
+    val lat: Double = 0.0
 
     @SerializedName("lng")
     @Expose
-    val lng:Double = 0.0
+    val lng: Double = 0.0
 }

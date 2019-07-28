@@ -64,13 +64,11 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
                         break
                     }
                 }
-
             }
             mPlaceAutocomplete.getResultFromPlaceId(placeId)
         }
 
         mPlaceAutocomplete = PlaceAutocomplete(this)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -116,7 +114,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
             places.add(results)
         }
 
-        //Creating an simple 2 line adapter for list view
+        // Creating an simple 2 line adapter for list view
         val adapter = SimpleAdapter(this, places, android.R.layout.simple_list_item_2,
                 arrayOf("place", "desc"),
                 intArrayOf(android.R.id.text1, android.R.id.text2))
@@ -146,4 +144,3 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
         const val EXTRA_PLACE_LONGITUDE = "com.jdoneill.placesearch.LONGITUDE"
     }
 }
-

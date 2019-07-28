@@ -4,8 +4,7 @@ import android.app.Application
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 
-
-class WeatherMap: Application() {
+class WeatherMap : Application() {
     // Called when the application is starting, before any other application objects have been created.
     // Overriding this method is totally optional!
     override fun onCreate() {
@@ -13,7 +12,7 @@ class WeatherMap: Application() {
         setupLeakCanary()
     }
 
-    private fun setupLeakCanary():RefWatcher {
+    private fun setupLeakCanary(): RefWatcher {
         if (LeakCanary.isInAnalyzerProcess(this)) return RefWatcher.DISABLED
         return LeakCanary.install(this)
     }

@@ -18,5 +18,4 @@ class GeomUtilTest {
         val expectedPoint = Point(-122.334184, 47.598323, SpatialReference.create(4326))
         assertEquals(expectedPoint.x, convertedPoint.x, 0.1)
     }
-
 }

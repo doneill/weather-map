@@ -6,5 +6,5 @@ import com.google.gson.annotations.SerializedName
 class Geometry {
     @SerializedName("location")
     @Expose
-    lateinit var location:Location
+    lateinit var location: Location
 }
