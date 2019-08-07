@@ -6,6 +6,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$gradleVersion"
@@ -22,6 +23,7 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://esri.bintray.com/arcgis' }
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
     }
     apply plugin: "org.jlleitschuh.gradle.ktlint"
 }
