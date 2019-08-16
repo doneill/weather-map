@@ -50,9 +50,9 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
             if (items is HashMap<*, *>) {
                 for (item in items.entries) {
-                    if (item.key.equals("place")) {
+                    if (item.key == "place") {
                         mPlaceName = item.value as String
-                    } else if (item.key.equals("desc")) {
+                    } else if (item.key == "desc") {
                         mDesc = item.value as String
                     }
                 }
