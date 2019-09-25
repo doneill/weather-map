@@ -21,6 +21,6 @@ ext {
     andXJunitVersion = '1.1.1'
     archLifecycleVersion = '2.0.0'
     // plugin versions
-    gradleVersion = '3.6.0-alpha10'
+    gradleVersion = '3.6.0-alpha12'
     ktlintVersion = '7.1.0'
 }
