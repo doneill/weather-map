@@ -10,8 +10,10 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
-        versionCode rootProject.ext.versionCode
-        versionName rootProject.ext.versionName
+        versionCode getBuildNumber()
+        versionName "${rootProject.ext.versionName}-${getBuildNumber()}"
+
+        archivesBaseName = "$APP_NAME-$versionName"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -62,4 +64,8 @@ task runDebugApp(type: Exec) {
     dependsOn 'installDebug'
     def adb = new File("${System.env.ANDROID_HOME}", "platform-tools${File.separator}adb")
     commandLine adb, "shell", "am", "start", "-n", "com.jdoneill.weathermap/com.jdoneill.weathermap.ui.MainActivity"
+}
+
+static def getBuildNumber() {
+    return "git rev-list --count HEAD".execute().text.trim().toInteger()
 }
