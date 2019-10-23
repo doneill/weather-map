@@ -22,6 +22,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         maven { url 'https://esri.bintray.com/arcgis' }
     }
     apply plugin: "org.jlleitschuh.gradle.ktlint"
