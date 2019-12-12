@@ -39,6 +39,7 @@ import org.jetbrains.anko.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import timber.log.Timber
 
 const val APIKEY = BuildConfig.API_KEY
 // degree sign
@@ -281,7 +282,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             }
 
             override fun onFailure(call: Call<Weather>?, t: Throwable?) {
-                t?.printStackTrace()
+                Timber.e(t)
             }
         })
     }
