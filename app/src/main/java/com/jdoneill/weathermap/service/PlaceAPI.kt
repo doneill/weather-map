@@ -2,7 +2,6 @@ package com.jdoneill.weathermap.service
 
 import com.jdoneill.weathermap.model.PlaceDetails
 import com.jdoneill.weathermap.model.Prediction
-
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReferences
 import com.esri.arcgisruntime.layers.WebTiledLayer
@@ -26,21 +25,17 @@ import com.esri.arcgisruntime.mapping.view.GraphicsOverlay
 import com.esri.arcgisruntime.mapping.view.LocationDisplay
 import com.esri.arcgisruntime.mapping.view.MapView
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
-
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.data.Weather
 import com.jdoneill.weathermap.presenter.WeatherClient
 import com.jdoneill.weathermap.util.GeometryUtil
-
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.toast
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -4,7 +4,6 @@ import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.model.PlaceDetails
 import com.jdoneill.weathermap.model.Prediction
 import com.jdoneill.weathermap.service.PlaceService
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

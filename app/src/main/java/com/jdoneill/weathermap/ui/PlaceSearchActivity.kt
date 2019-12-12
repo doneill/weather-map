@@ -9,18 +9,15 @@ import android.view.View
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.SimpleAdapter
-
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.model.Predictions
 import com.jdoneill.weathermap.model.Result
 import com.jdoneill.weathermap.presenter.PlaceAutocomplete
 import com.jdoneill.weathermap.presenter.PlacesListener
-
 import java.util.ArrayList
 import java.util.HashMap
-
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 
 class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 

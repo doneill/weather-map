@@ -3,11 +3,9 @@ package com.jdoneill.weathermap.test
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReference
 import com.esri.arcgisruntime.geometry.SpatialReferences
-
 import com.jdoneill.weathermap.util.GeometryUtil
-
-import org.junit.Test
 import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class GeomUtilTest {
 
