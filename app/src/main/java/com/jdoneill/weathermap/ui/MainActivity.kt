@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val extras = intent.extras
 
         // show mMap
-        mMap = ArcGISMap(Basemap.createDarkGrayCanvasVector())
+        mMap = ArcGISMap(Basemap.createStreetsVector())
         mapView.map = mMap
 
         // graphics overlay for tapped location marker
