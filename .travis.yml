@@ -2,6 +2,10 @@ language: android
 sudo: required
 jdk: oraclejdk8
 
+branches:
+  only:
+    - master # build master branch only
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -32,3 +36,5 @@ android:
     - 'android-sdk-preview-license-52d11cd2'
     - 'android-sdk-license-.+'
     - 'google-gdk-license-.+'
+
+script: ./gradlew clean assembleDebug --info
