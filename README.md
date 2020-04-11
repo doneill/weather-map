@@ -1,4 +1,6 @@
 # Weather Map
+![](https://travis-ci.org/doneill/weather-map.svg?branch=master)
+
 An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime Android APIs using the [Kotlin](https://kotlinlang.org/) programming language.
 
 ![weather map image](weather-map.png)
