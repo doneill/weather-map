@@ -9,7 +9,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class WeatherClient {
-    private val APIKEY: String = BuildConfig.API_KEY
+    private val apiKey: String = BuildConfig.API_KEY
 
     /**
      * Get weather forecast at coordinate location
@@ -23,6 +23,6 @@ class WeatherClient {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         val weatherServices = network.create(WeatherService::class.java)
-        return weatherServices.weatherByCoord("imperial", lat, lon, APIKEY)
+        return weatherServices.weatherByCoord("imperial", lat, lon, apiKey)
     }
 }
