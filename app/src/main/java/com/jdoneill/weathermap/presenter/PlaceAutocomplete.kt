@@ -9,12 +9,14 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class PlaceAutocomplete(private val mListener: PlacesListener) {
+    private val placesApiKey = BuildConfig.PLACES_API_KEY
+
     private val placeService: PlaceService = PlaceService()
 
     fun getPredictions(text: String, latLng: String) {
         placeService
                 .api
-                .getPredictions(APIKEY, text, latLng, "100")
+                .getPredictions(placesApiKey, text, latLng, "100")
                 .enqueue(object : Callback<Prediction> {
                     override fun onResponse(call: Call<Prediction>, response: Response<Prediction>) {
                         if (response.isSuccessful) {
@@ -38,7 +40,7 @@ class PlaceAutocomplete(private val mListener: PlacesListener) {
     fun getResultFromPlaceId(placeId: String) {
         placeService
                 .api
-                .getDetails(APIKEY, placeId)
+                .getDetails(placesApiKey, placeId)
                 .enqueue(object : Callback<PlaceDetails> {
                     override fun onResponse(call: Call<PlaceDetails>, response: Response<PlaceDetails>) {
                         if (response.isSuccessful) {
@@ -57,9 +59,5 @@ class PlaceAutocomplete(private val mListener: PlacesListener) {
                         }
                     }
                 })
-    }
-
-    companion object {
-        private const val APIKEY = BuildConfig.PLACES_API_KEY
     }
 }
