@@ -273,12 +273,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 val weather: Weather? = response?.body()
                 // present date if main not null
                 weather?.let { presentData(it, location, graphicOverlay) }
-
-                val name = weather?.name
-                val sys = weather?.sys
-                val sunrise = sys?.sunrise
-                val sunset = sys?.sunset
-                println("station name: $name | sunrise: $sunrise | sunset: $sunset")
             }
 
             override fun onFailure(call: Call<Weather>?, t: Throwable?) {
