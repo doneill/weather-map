@@ -40,6 +40,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 const val APIKEY = BuildConfig.API_KEY
 // degree sign
@@ -294,6 +297,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val highTemp = main.minTemp
         val lowTemp = main.maxTemp
 
+        val sunrise = sys.sunrise.times(1000)
+        val sunset = sys.sunset.times(1000)
+
+        val df = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
+        val rise = df.format(sunrise.let { Date(it).time })
+        val set = df.format(sunset.let { Date(it).time })
+
         // create a marker at tapped location
         val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 15.0f)
         val locationGraphic = Graphic(mapPoint, locationMarker)
@@ -303,7 +313,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         val calloutContent = TextView(applicationContext)
         calloutContent.setTextColor(Color.BLACK)
         // create text from string resource
-        val calloutText = getString(R.string.callout_text, cityName, temp, DEGREE, highTemp, DEGREE, lowTemp, DEGREE)
+        val calloutText = getString(R.string.callout_text, cityName, temp, DEGREE, highTemp, DEGREE, lowTemp, DEGREE, rise, set)
         calloutContent.text = calloutText
         // get mCallout, set content and geoelement graphic
         mCallout = mapView.callout
