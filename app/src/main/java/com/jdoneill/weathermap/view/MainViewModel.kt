@@ -1,4 +1,4 @@
-package com.jdoneill.weathermap.ui
+package com.jdoneill.weathermap.view
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

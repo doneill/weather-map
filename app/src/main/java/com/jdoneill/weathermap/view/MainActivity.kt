@@ -1,4 +1,4 @@
-package com.jdoneill.weathermap.ui
+package com.jdoneill.weathermap.view
 
 import android.Manifest
 import android.content.Intent
