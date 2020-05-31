@@ -45,7 +45,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:elevation="@dimen/fab_elevation"
+        app:backgroundTint="@color/colorAccent"
         app:srcCompat="@android:drawable/ic_menu_mylocation"
-        app:useCompatPadding="true"/>
+        app:useCompatPadding="true" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
