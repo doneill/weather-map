@@ -29,10 +29,11 @@
         android:layout_marginTop="@dimen/fab_layer_margin"
         android:layout_marginEnd="@dimen/fab_margin"
         android:elevation="@dimen/fab_elevation"
+        app:backgroundTint="@color/colorAccent"
         app:fabSize="mini"
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="top|end"
-        app:srcCompat="@drawable/ic_action_layers"/>
+        app:srcCompat="@drawable/ic_action_layers" />
 
     <include layout="@layout/content_main" />
 

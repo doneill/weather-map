@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         val extras = intent.extras
 
-        map = ArcGISMap(Basemap.createLightGrayCanvasVector())
+        map = ArcGISMap(Basemap.createOpenStreetMap())
         mapView.map = map
 
         viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map)).get(MainViewModel::class.java)
