@@ -21,12 +21,12 @@ import java.util.HashMap
 
 class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
-    private lateinit var mPlaceAutocomplete: PlaceAutocomplete
-    private lateinit var mPredictions: List<Predictions>
-    private lateinit var mPlacesListView: ListView
-    private lateinit var mLatLng: String
-    private lateinit var mPlaceName: String
-    private lateinit var mDesc: String
+    private lateinit var placeAutocomplete: PlaceAutocomplete
+    private lateinit var predictions: List<Predictions>
+    private lateinit var placesListView: ListView
+    private lateinit var latLng: String
+    private lateinit var placeName: String
+    private lateinit var description: String
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,35 +37,36 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
         // get the intent
         val intent = intent
-        mLatLng = intent.getStringExtra(MainActivity.EXTRA_LATLNG)
+        
+        latLng = intent.getStringExtra(MainActivity.EXTRA_LATLNG)
 
-        mPlacesListView = findViewById(R.id.lvPlaces)
+        placesListView = findViewById(R.id.lvPlaces)
 
-        mPlacesListView.setOnItemClickListener { _, _, pos, _ ->
+        placesListView.setOnItemClickListener { _, _, pos, _ ->
             var placeId = ""
-            val items = mPlacesListView.getItemAtPosition(pos)
+            val items = placesListView.getItemAtPosition(pos)
 
             if (items is HashMap<*, *>) {
                 for (item in items.entries) {
                     if (item.key == "place") {
-                        mPlaceName = item.value as String
+                        placeName = item.value as String
                     } else if (item.key == "desc") {
-                        mDesc = item.value as String
+                        description = item.value as String
                     }
                 }
 
-                for (i in mPredictions.indices) {
-                    if (mPlaceName == mPredictions[i].structuredFormatting.mainText &&
-                            mDesc == mPredictions[i].structuredFormatting.secondaryText) {
-                        placeId = mPredictions[i].placeId
+                for (i in predictions.indices) {
+                    if (placeName == predictions[i].structuredFormatting.mainText &&
+                            description == predictions[i].structuredFormatting.secondaryText) {
+                        placeId = predictions[i].placeId
                         break
                     }
                 }
             }
-            mPlaceAutocomplete.getResultFromPlaceId(placeId)
+            placeAutocomplete.getResultFromPlaceId(placeId)
         }
 
-        mPlaceAutocomplete = PlaceAutocomplete(this)
+        placeAutocomplete = PlaceAutocomplete(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -88,8 +89,8 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-                    mPlacesListView.visibility = View.VISIBLE
-                    mPlaceAutocomplete.getPredictions(newText, mLatLng)
+                    placesListView.visibility = View.VISIBLE
+                    placeAutocomplete.getPredictions(newText, latLng)
                     return false
                 }
             })
@@ -99,15 +100,15 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
     }
 
     override fun getPredictionsList(predictions: List<Predictions>) {
-        this.mPredictions = predictions
+        this.predictions = predictions
 
         val places = ArrayList<HashMap<String, String>>()
         var results: HashMap<String, String>
 
-        for (i in mPredictions.indices) {
+        for (i in this.predictions.indices) {
             results = HashMap()
-            results["place"] = mPredictions[i].structuredFormatting.mainText
-            results["desc"] = mPredictions[i].structuredFormatting.secondaryText
+            results["place"] = this.predictions[i].structuredFormatting.mainText
+            results["desc"] = this.predictions[i].structuredFormatting.secondaryText
             places.add(results)
         }
 
@@ -116,7 +117,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
                 arrayOf("place", "desc"),
                 intArrayOf(android.R.id.text1, android.R.id.text2))
 
-        mPlacesListView.adapter = adapter
+        placesListView.adapter = adapter
     }
 
     override fun getResult(result: Result) {
