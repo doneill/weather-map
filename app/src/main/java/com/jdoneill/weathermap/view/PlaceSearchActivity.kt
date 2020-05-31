@@ -11,22 +11,21 @@ import android.widget.SearchView
 import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
+
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.model.Predictions
 import com.jdoneill.weathermap.model.Result
 import com.jdoneill.weathermap.presenter.PlaceAutocomplete
 import com.jdoneill.weathermap.presenter.PlacesListener
-import java.util.ArrayList
-import java.util.HashMap
 
 class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
+    private lateinit var viewModel: PlaceSearchViewModel
     private lateinit var placeAutocomplete: PlaceAutocomplete
     private lateinit var predictions: List<Predictions>
     private lateinit var placesListView: ListView
     private lateinit var latLng: String
-    private lateinit var placeName: String
-    private lateinit var description: String
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,32 +36,15 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
         // get the intent
         val intent = intent
-        
+
         latLng = intent.getStringExtra(MainActivity.EXTRA_LATLNG)
+        viewModel = ViewModelProvider(this, PlaceSearchViewModel.FACTORY(latLng)).get(PlaceSearchViewModel::class.java)
 
         placesListView = findViewById(R.id.lvPlaces)
-
         placesListView.setOnItemClickListener { _, _, pos, _ ->
-            var placeId = ""
-            val items = placesListView.getItemAtPosition(pos)
+            val place = placesListView.getItemAtPosition(pos)
+            val placeId = viewModel.placeFromPrediction(place, predictions)
 
-            if (items is HashMap<*, *>) {
-                for (item in items.entries) {
-                    if (item.key == "place") {
-                        placeName = item.value as String
-                    } else if (item.key == "desc") {
-                        description = item.value as String
-                    }
-                }
-
-                for (i in predictions.indices) {
-                    if (placeName == predictions[i].structuredFormatting.mainText &&
-                            description == predictions[i].structuredFormatting.secondaryText) {
-                        placeId = predictions[i].placeId
-                        break
-                    }
-                }
-            }
             placeAutocomplete.getResultFromPlaceId(placeId)
         }
 
@@ -102,15 +84,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
     override fun getPredictionsList(predictions: List<Predictions>) {
         this.predictions = predictions
 
-        val places = ArrayList<HashMap<String, String>>()
-        var results: HashMap<String, String>
-
-        for (i in this.predictions.indices) {
-            results = HashMap()
-            results["place"] = this.predictions[i].structuredFormatting.mainText
-            results["desc"] = this.predictions[i].structuredFormatting.secondaryText
-            places.add(results)
-        }
+        val places = viewModel.listOfPredictions(this.predictions)
 
         // Creating an simple 2 line adapter for list view
         val adapter = SimpleAdapter(this, places, android.R.layout.simple_list_item_2,
