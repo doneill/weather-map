@@ -35,14 +35,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.selector
 
 const val APIKEY = BuildConfig.API_KEY
 // degree sign
 const val DEGREE: String = "\u00B0"
 
-class MainActivity : AppCompatActivity(), AnkoLogger {
+class MainActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_LATLNG: String = "com.jdoneill.placesearch.LATLNG"
@@ -122,6 +121,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         // weather layer selector
         val weatherLayer = listOf("Clear Layers", "Precipitation", "Temperature")
+
         layerFab.setOnClickListener {
             selector("Weather Layers", weatherLayer) { _, i ->
                 when {
