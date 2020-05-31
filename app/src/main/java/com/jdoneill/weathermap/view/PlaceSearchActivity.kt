@@ -1,4 +1,4 @@
-package com.jdoneill.weathermap.ui
+package com.jdoneill.weathermap.view
 
 import android.app.SearchManager
 import android.content.Context
@@ -11,22 +11,21 @@ import android.widget.SearchView
 import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
+
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.model.Predictions
 import com.jdoneill.weathermap.model.Result
 import com.jdoneill.weathermap.presenter.PlaceAutocomplete
 import com.jdoneill.weathermap.presenter.PlacesListener
-import java.util.ArrayList
-import java.util.HashMap
 
 class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
-    private lateinit var mPlaceAutocomplete: PlaceAutocomplete
-    private lateinit var mPredictions: List<Predictions>
-    private lateinit var mPlacesListView: ListView
-    private lateinit var mLatLng: String
-    private lateinit var mPlaceName: String
-    private lateinit var mDesc: String
+    private lateinit var viewModel: PlaceSearchViewModel
+    private lateinit var placeAutocomplete: PlaceAutocomplete
+    private lateinit var predictions: List<Predictions>
+    private lateinit var placesListView: ListView
+    private lateinit var latLng: String
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,35 +36,19 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
 
         // get the intent
         val intent = intent
-        mLatLng = intent.getStringExtra(MainActivity.EXTRA_LATLNG)
 
-        mPlacesListView = findViewById(R.id.lvPlaces)
+        latLng = intent.getStringExtra(MainActivity.EXTRA_LATLNG)
+        viewModel = ViewModelProvider(this, PlaceSearchViewModel.FACTORY(latLng)).get(PlaceSearchViewModel::class.java)
 
-        mPlacesListView.setOnItemClickListener { _, _, pos, _ ->
-            var placeId = ""
-            val items = mPlacesListView.getItemAtPosition(pos)
+        placesListView = findViewById(R.id.lvPlaces)
+        placesListView.setOnItemClickListener { _, _, pos, _ ->
+            val place = placesListView.getItemAtPosition(pos)
+            val placeId = viewModel.placeFromPrediction(place, predictions)
 
-            if (items is HashMap<*, *>) {
-                for (item in items.entries) {
-                    if (item.key == "place") {
-                        mPlaceName = item.value as String
-                    } else if (item.key == "desc") {
-                        mDesc = item.value as String
-                    }
-                }
-
-                for (i in mPredictions.indices) {
-                    if (mPlaceName == mPredictions[i].structuredFormatting.mainText &&
-                            mDesc == mPredictions[i].structuredFormatting.secondaryText) {
-                        placeId = mPredictions[i].placeId
-                        break
-                    }
-                }
-            }
-            mPlaceAutocomplete.getResultFromPlaceId(placeId)
+            placeAutocomplete.getResultFromPlaceId(placeId)
         }
 
-        mPlaceAutocomplete = PlaceAutocomplete(this)
+        placeAutocomplete = PlaceAutocomplete(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -79,7 +62,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
         (menu.findItem(R.id.placeSearch).actionView!! as SearchView).apply {
             // Assumes current activity is the searchable activity
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
-            setIconifiedByDefault(false) // Do not iconify the widget; expand it by default
+            isIconifiedByDefault = false // Do not iconify the widget; expand it by default
             requestFocus()
 
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -88,8 +71,8 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
-                    mPlacesListView.visibility = View.VISIBLE
-                    mPlaceAutocomplete.getPredictions(newText, mLatLng)
+                    placesListView.visibility = View.VISIBLE
+                    placeAutocomplete.getPredictions(newText, latLng)
                     return false
                 }
             })
@@ -99,24 +82,16 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
     }
 
     override fun getPredictionsList(predictions: List<Predictions>) {
-        this.mPredictions = predictions
+        this.predictions = predictions
 
-        val places = ArrayList<HashMap<String, String>>()
-        var results: HashMap<String, String>
-
-        for (i in 0 until mPredictions.size) {
-            results = HashMap()
-            results["place"] = mPredictions[i].structuredFormatting.mainText
-            results["desc"] = mPredictions[i].structuredFormatting.secondaryText
-            places.add(results)
-        }
+        val places = viewModel.listOfPredictions(this.predictions)
 
         // Creating an simple 2 line adapter for list view
         val adapter = SimpleAdapter(this, places, android.R.layout.simple_list_item_2,
                 arrayOf("place", "desc"),
                 intArrayOf(android.R.id.text1, android.R.id.text2))
 
-        mPlacesListView.adapter = adapter
+        placesListView.adapter = adapter
     }
 
     override fun getResult(result: Result) {

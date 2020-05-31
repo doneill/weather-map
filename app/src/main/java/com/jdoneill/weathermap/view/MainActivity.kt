@@ -1,4 +1,4 @@
-package com.jdoneill.weathermap.ui
+package com.jdoneill.weathermap.view
 
 import android.Manifest
 import android.content.Intent
@@ -12,49 +12,47 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReferences
-import com.esri.arcgisruntime.layers.WebTiledLayer
 import com.esri.arcgisruntime.loadable.LoadStatus
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.esri.arcgisruntime.mapping.Basemap
-import com.esri.arcgisruntime.mapping.view.Callout
-import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener
-import com.esri.arcgisruntime.mapping.view.Graphic
-import com.esri.arcgisruntime.mapping.view.GraphicsOverlay
-import com.esri.arcgisruntime.mapping.view.LocationDisplay
-import com.esri.arcgisruntime.mapping.view.MapView
+import com.esri.arcgisruntime.mapping.view.*
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
+import com.google.android.material.snackbar.Snackbar
+
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
-import com.jdoneill.weathermap.data.Weather
-import com.jdoneill.weathermap.presenter.WeatherClient
 import com.jdoneill.weathermap.util.GeometryUtil
+
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 import org.jetbrains.anko.selector
-import org.jetbrains.anko.toast
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import timber.log.Timber
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 const val APIKEY = BuildConfig.API_KEY
 // degree sign
 const val DEGREE: String = "\u00B0"
 
-class MainActivity : AppCompatActivity(), AnkoLogger {
+class MainActivity : AppCompatActivity() {
+
+    companion object {
+        const val EXTRA_LATLNG: String = "com.jdoneill.placesearch.LATLNG"
+    }
 
     // mapping
-    private lateinit var mMap: ArcGISMap
-    private lateinit var mOverlay: GraphicsOverlay
-    private lateinit var mCallout: Callout
-    private lateinit var mLocationDisplay: LocationDisplay
+    private lateinit var map: ArcGISMap
+    private lateinit var viewModel: MainViewModel
+    private lateinit var mapOverlay: GraphicsOverlay
+    private lateinit var mapCallout: Callout
+    private lateinit var locationDisplay: LocationDisplay
     // menu items
     private lateinit var placeSearchItem: MenuItem
     // runtime permissions
@@ -65,33 +63,46 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         setSupportActionBar(toolbar)
 
         val extras = intent.extras
 
-        // show mMap
-        mMap = ArcGISMap(Basemap.createLightGrayCanvasVector())
-        mapView.map = mMap
+        map = ArcGISMap(Basemap.createOpenStreetMap())
+        mapView.map = map
 
+        viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map)).get(MainViewModel::class.java)
         // graphics overlay for tapped location marker
-        mOverlay = addGraphicsOverlay(mapView)
+        mapOverlay = addGraphicsOverlay(mapView)
 
         // get the MapView location display
-        mLocationDisplay = mapView.locationDisplay
+        locationDisplay = mapView.locationDisplay
 
         if (extras != null) {
             val lat: Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE)
             val lon: Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE)
-            mOverlay.graphics.clear()
+            mapOverlay.graphics.clear()
             mapView.callout.dismiss()
             // create arcgis point
             val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
             // get the weather
-            weatherAtLocation(placePnt, mOverlay)
-        } else {
-            mMap.addDoneLoadingListener {
-                val centerPnt = mLocationDisplay.location.position
-                weatherAtLocation(centerPnt, mOverlay)
+            CoroutineScope(Dispatchers.IO).launch {
+                val weatherResponse = viewModel.weatherDataResponse(placePnt)
+                withContext(Dispatchers.Main) {
+                    showCallout(weatherResponse, placePnt, mapOverlay)
+                }
+            }
+        }
+        else if (locationDisplay.isStarted) {
+            map.addDoneLoadingListener {
+                val centerPnt = locationDisplay.location.position
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val weatherResponse = viewModel.weatherDataResponse(centerPnt)
+                    withContext(Dispatchers.Main) {
+                        showCallout(weatherResponse, centerPnt, mapOverlay)
+                    }
+                }
             }
         }
 
@@ -101,7 +112,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         // check if permissions needed
         if (permFineLoc && permCoarseLoc) {
             // have required permissions
-            mLocationDisplay.startAsync()
+            locationDisplay.startAsync()
         } else {
             // request permissions at runtime
             val requestCode = 2
@@ -109,23 +120,24 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         }
 
         // weather layer selector
-        val weatherLayer = listOf("Clear Layers", "Precipitation", "Temperature")
+        val weatherLayer = listOf(
+                                            getString(R.string.layer_clear),
+                                            getString(R.string.layer_precip),
+                                            getString(R.string.layer_temp) )
+
         layerFab.setOnClickListener {
-            selector("Weather Layers", weatherLayer) { _, i ->
+            selector(getString(R.string.layer_title), weatherLayer) { _, i ->
                 when {
                     // clear all layers
-                    weatherLayer[i] == "Clear Layers" -> mMap.operationalLayers.clear()
+                    weatherLayer[i] == "Clear Layers" -> map.operationalLayers.clear()
                     // add precipitation layer
                     weatherLayer[i] == "Precipitation" -> {
-                        mMap.operationalLayers.clear()
-                        // add open weather precipitation layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
-                        val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
-                        openPrecipLayer.loadAsync()
+                        map.operationalLayers.clear()
+                        val openPrecipLayer = viewModel.loadWeatherLayer("precipitation_new")
+
                         openPrecipLayer.addDoneLoadingListener {
                             if (openPrecipLayer.loadStatus == LoadStatus.LOADED) {
-                                info { "Open precip layer loaded" }
-                                mMap.operationalLayers.add(openPrecipLayer)
+                                map.operationalLayers.add(openPrecipLayer)
                             }
                         }
                         // zoom out to see layer
@@ -133,15 +145,12 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     }
                     // add temperature layer
                     weatherLayer[i] == "Temperature" -> {
-                        mMap.operationalLayers.clear()
-                        // add open weather temperature layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
-                        val openTempLayer = WebTiledLayer(templateUri, subDomains)
-                        openTempLayer.loadAsync()
+                        map.operationalLayers.clear()
+                        val openTempLayer = viewModel.loadWeatherLayer("temp_new")
+
                         openTempLayer.addDoneLoadingListener {
                             if (openTempLayer.loadStatus == LoadStatus.LOADED) {
-                                info { "Open precip layer loaded" }
-                                mMap.operationalLayers.add(openTempLayer)
+                                map.operationalLayers.add(openTempLayer)
                             }
                         }
                         // zoom out to see layer
@@ -157,39 +166,49 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
                 if (mapView.callout.isShowing) {
                     // clear any graphics and callouts
-                    mOverlay.graphics.clear()
+                    mapOverlay.graphics.clear()
                     mapView.callout.dismiss()
                 }
                 return super.onSingleTapConfirmed(motionEvent)
             }
 
             override fun onLongPress(motionEvent: MotionEvent?) {
+                super.onLongPress(motionEvent)
                 // clear any graphics and callouts
-                mOverlay.graphics.clear()
+                mapOverlay.graphics.clear()
                 mapView.callout.dismiss()
                 // get the point that was clicked and convert it to a point in mMap coordinates
                 val screenPoint: android.graphics.Point = android.graphics.Point(motionEvent!!.x.toInt(), motionEvent.y.toInt())
                 // create a mMap point from screen point
                 val mapPoint: Point = mapView.screenToLocation(screenPoint)
                 // get the weather at tapped location
-                weatherAtLocation(mapPoint, mOverlay)
-                super.onLongPress(motionEvent)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val weatherResponse = viewModel.weatherDataResponse(mapPoint)
+                    withContext(Dispatchers.Main) {
+                        showCallout(weatherResponse, mapPoint, mapOverlay)
+                    }
+                }
             }
         }
 
         // turn on/off location display
         locationFab.setOnClickListener {
-            if (mLocationDisplay.isStarted) {
-                mLocationDisplay.stop()
-            } else {
+            if (locationDisplay.isStarted) {
                 // clear any graphics and callouts
-                mOverlay.graphics.clear()
+                mapOverlay.graphics.clear()
                 mapView.callout.dismiss()
                 // start location display
-                mLocationDisplay.startAsync()
+                locationDisplay.startAsync()
                 // zoom to location and display weather
-                val centerPnt = mLocationDisplay.location.position
-                weatherAtLocation(centerPnt, mOverlay)
+                val centerPnt = locationDisplay.location.position
+                CoroutineScope(Dispatchers.IO).launch {
+                    val weatherResponse = viewModel.weatherDataResponse(centerPnt)
+                    withContext(Dispatchers.Main) {
+                        showCallout(weatherResponse, centerPnt, mapOverlay)
+                    }
+                }
+            } else {
+                viewModel.displayMessage(getString(R.string.location_settings))
             }
         }
 
@@ -199,6 +218,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             val heightDelta = bottom - oldBottom
             params.bottomMargin += heightDelta
         }
+
+        viewModel.snackbar.observe(this, Observer {
+            it?.let {
+                Snackbar.make(mapView, it, Snackbar.LENGTH_SHORT).show()
+                viewModel.onSnackbarShown()
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -211,7 +237,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-
         // place search
         R.id.menu_search -> consume {
             // open auto complete intent
@@ -237,9 +262,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            mLocationDisplay.startAsync()
+            locationDisplay.startAsync()
         } else {
-            toast("denied")
+            viewModel.displayMessage(getString(R.string.location_settings))
         }
     }
 
@@ -257,69 +282,34 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     }
 
     /**
-     * Get weather from location
-     *
-     * @param location Location as Point
-     */
-    private fun weatherAtLocation(location: Point, graphicOverlay: GraphicsOverlay) {
-        // check incoming location sr for api compatibility
-        val wgs84Pnt = if (location.spatialReference != SpatialReferences.getWgs84()) {
-            GeometryUtil.convertToWgs84(location)
-        } else {
-            location
-        }
-
-        val network = WeatherClient()
-        val call = network.getWeatherForCoord(wgs84Pnt.y.toFloat(), wgs84Pnt.x.toFloat())
-        call.enqueue(object : Callback<Weather> {
-            override fun onResponse(call: Call<Weather>?, response: Response<Weather>?) {
-                val weather: Weather? = response?.body()
-                // present date if main not null
-                weather?.let { presentData(it, location, graphicOverlay) }
-            }
-
-            override fun onFailure(call: Call<Weather>?, t: Throwable?) {
-                Timber.e(t)
-            }
-        })
-    }
-
-    /**
      * Present the weather data in a Callout
      *
-     * @param weather weather data
+     * @param weatherResponse weather data response text
      * @param mapPoint location to show Callout
      * @param dataOverlay GraphicsOverlay to add Marker
      */
-    private fun presentData(weather: Weather, mapPoint: Point, dataOverlay: GraphicsOverlay) = with(weather) {
-        val cityName = name
-        val temp = main.temp
-        val highTemp = main.minTemp
-        val lowTemp = main.maxTemp
-
-        val sunrise = sys.sunrise.times(1000)
-        val sunset = sys.sunset.times(1000)
-
-        val df = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
-        val rise = df.format(sunrise.let { Date(it).time })
-        val set = df.format(sunset.let { Date(it).time })
-
+    private fun showCallout(weatherResponse: Map<String, Any>, mapPoint: Point, dataOverlay: GraphicsOverlay) {
         // create a marker at tapped location
         val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 15.0f)
         val locationGraphic = Graphic(mapPoint, locationMarker)
         dataOverlay.graphics.add(locationGraphic)
 
-        // create a textview for the mCallout
+        // create a textview for the callout
         val calloutContent = TextView(applicationContext)
         calloutContent.setTextColor(Color.BLACK)
-        // create text from string resource
-        val calloutText = getString(R.string.callout_text, cityName, temp, DEGREE, highTemp, DEGREE, lowTemp, DEGREE, rise, set)
-        calloutContent.text = calloutText
-        // get mCallout, set content and geoelement graphic
-        mCallout = mapView.callout
-        mCallout.content = calloutContent
-        mCallout.setGeoElement(locationGraphic, mapPoint)
-        mCallout.show()
+
+        val name = weatherResponse["name"] as String
+        val temp = weatherResponse["temp"] as Float
+        val maxTemp = weatherResponse["maxTemp"] as Float
+        val minTemp = weatherResponse["minTemp"] as Float
+        val rise = weatherResponse["rise"] as String
+        val set = weatherResponse["set"] as String
+        
+        calloutContent.text = getString(R.string.callout_text, name, temp, DEGREE, maxTemp, DEGREE, minTemp, DEGREE, rise, set)
+        mapCallout = mapView.callout
+        mapCallout.content = calloutContent
+        mapCallout.setGeoElement(locationGraphic, mapPoint)
+        mapCallout.show()
         // center on the location, zoom in when scaled out
         val mapScale = mapView.mapScale
         if (mapScale < 350000.0) {
@@ -343,7 +333,4 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         startActivity(intent)
     }
 
-    companion object {
-        const val EXTRA_LATLNG: String = "com.jdoneill.placesearch.LATLNG"
-    }
 }

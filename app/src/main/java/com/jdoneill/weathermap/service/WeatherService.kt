@@ -1,7 +1,6 @@
 package com.jdoneill.weathermap.service
 
-import com.jdoneill.weathermap.data.Weather
-import retrofit2.Call
+import com.jdoneill.weathermap.data.WeatherData
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -15,10 +14,11 @@ interface WeatherService {
     // ------------------------------------------------------------------------
 
     @GET("/data/2.5/weather")
-    fun weatherByCoord(
+    suspend fun weatherByCoord(
         @Query("units") units: String,
         @Query("lat") lat: Float,
         @Query("lon") lon: Float,
         @Query("APPID") apiKey: String
-    ): Call<Weather>
+    ): WeatherData
+
 }

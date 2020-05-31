@@ -7,7 +7,7 @@
     android:paddingLeft="4dp"
     android:paddingRight="4dp"
     android:paddingTop="4dp"
-    tools:context="com.jdoneill.weathermap.ui.MainActivity" >
+    tools:context="com.jdoneill.weathermap.view.MainActivity" >
 
     <TextView
         android:id="@+id/cityField"

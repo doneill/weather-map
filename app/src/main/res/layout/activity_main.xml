@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.jdoneill.weathermap.ui.MainActivity">
+    tools:context="com.jdoneill.weathermap.view.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -29,10 +29,11 @@
         android:layout_marginTop="@dimen/fab_layer_margin"
         android:layout_marginEnd="@dimen/fab_margin"
         android:elevation="@dimen/fab_elevation"
+        app:backgroundTint="@color/colorAccent"
         app:fabSize="mini"
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="top|end"
-        app:srcCompat="@drawable/ic_action_layers"/>
+        app:srcCompat="@drawable/ic_action_layers" />
 
     <include layout="@layout/content_main" />
 
@@ -44,7 +45,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:elevation="@dimen/fab_elevation"
+        app:backgroundTint="@color/colorAccent"
         app:srcCompat="@android:drawable/ic_menu_mylocation"
-        app:useCompatPadding="true"/>
+        app:useCompatPadding="true" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
