@@ -104,7 +104,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
         val places = ArrayList<HashMap<String, String>>()
         var results: HashMap<String, String>
 
-        for (i in 0 until mPredictions.size) {
+        for (i in mPredictions.indices) {
             results = HashMap()
             results["place"] = mPredictions[i].structuredFormatting.mainText
             results["desc"] = mPredictions[i].structuredFormatting.secondaryText
