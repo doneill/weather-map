@@ -20,17 +20,11 @@ import com.esri.arcgisruntime.layers.WebTiledLayer
 import com.esri.arcgisruntime.loadable.LoadStatus
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.esri.arcgisruntime.mapping.Basemap
-import com.esri.arcgisruntime.mapping.view.Callout
-import com.esri.arcgisruntime.mapping.view.DefaultMapViewOnTouchListener
-import com.esri.arcgisruntime.mapping.view.Graphic
-import com.esri.arcgisruntime.mapping.view.GraphicsOverlay
-import com.esri.arcgisruntime.mapping.view.LocationDisplay
-import com.esri.arcgisruntime.mapping.view.MapView
+import com.esri.arcgisruntime.mapping.view.*
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
 
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
-import com.jdoneill.weathermap.data.WeatherData
 import com.jdoneill.weathermap.util.GeometryUtil
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -44,11 +38,6 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.toast
-import timber.log.Timber
-
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 const val APIKEY = BuildConfig.API_KEY
 // degree sign
@@ -95,9 +84,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
             // get the weather
             CoroutineScope(Dispatchers.IO).launch {
-                val weather = viewModel.weatherAtLocation(placePnt)
+                val weatherResponse = viewModel.weatherDataResponse(placePnt)
                 withContext(Dispatchers.Main) {
-                    presentData(weather, placePnt, mapOverlay)
+                    showCallout(weatherResponse, placePnt, mapOverlay)
                 }
             }
         } else {
@@ -105,9 +94,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 val centerPnt = locationDisplay.location.position
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val weather = viewModel.weatherAtLocation(centerPnt)
+                    val weatherResponse = viewModel.weatherDataResponse(centerPnt)
                     withContext(Dispatchers.Main) {
-                        presentData(weather, centerPnt, mapOverlay)
+                        showCallout(weatherResponse, centerPnt, mapOverlay)
                     }
                 }
             }
@@ -192,9 +181,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 val mapPoint: Point = mapView.screenToLocation(screenPoint)
                 // get the weather at tapped location
                 CoroutineScope(Dispatchers.IO).launch {
-                    val weather = viewModel.weatherAtLocation(mapPoint)
+                    val weatherResponse = viewModel.weatherDataResponse(mapPoint)
                     withContext(Dispatchers.Main) {
-                        presentData(weather, mapPoint, mapOverlay)
+                        showCallout(weatherResponse, mapPoint, mapOverlay)
                     }
                 }
             }
@@ -213,9 +202,9 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 // zoom to location and display weather
                 val centerPnt = locationDisplay.location.position
                 CoroutineScope(Dispatchers.IO).launch {
-                    val weather = viewModel.weatherAtLocation(centerPnt)
+                    val weatherResponse = viewModel.weatherDataResponse(centerPnt)
                     withContext(Dispatchers.Main) {
-                        presentData(weather, centerPnt, mapOverlay)
+                        showCallout(weatherResponse, centerPnt, mapOverlay)
                     }
                 }
             }
@@ -286,40 +275,28 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     /**
      * Present the weather data in a Callout
      *
-     * @param weatherData weather data
+     * @param weatherResponse weather data response text
      * @param mapPoint location to show Callout
      * @param dataOverlay GraphicsOverlay to add Marker
      */
-    private fun presentData(weatherData: WeatherData, mapPoint: Point, dataOverlay: GraphicsOverlay) = with(weatherData) {
-        val cityName = name
-        val temp = main.temp
-        val highTemp = main.minTemp
-        val lowTemp = main.maxTemp
-
-        val weather = weather
-        for (info in weather) {
-            Timber.d("Weather Info: name:%s description:%s", info.name, info.description)
-        }
-
-        val sunrise = sys.sunrise.times(1000)
-        val sunset = sys.sunset.times(1000)
-
-        val df = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
-        val rise = df.format(sunrise.let { Date(it).time })
-        val set = df.format(sunset.let { Date(it).time })
-
+    private fun showCallout(weatherResponse: Map<String, Any>, mapPoint: Point, dataOverlay: GraphicsOverlay) {
         // create a marker at tapped location
         val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 15.0f)
         val locationGraphic = Graphic(mapPoint, locationMarker)
         dataOverlay.graphics.add(locationGraphic)
 
-        // create a textview for the mCallout
+        // create a textview for the callout
         val calloutContent = TextView(applicationContext)
         calloutContent.setTextColor(Color.BLACK)
-        // create text from string resource
-        val calloutText = getString(R.string.callout_text, cityName, temp, DEGREE, highTemp, DEGREE, lowTemp, DEGREE, rise, set)
-        calloutContent.text = calloutText
-        // get mapCallout, set content and geoelement graphic
+
+        val name = weatherResponse["name"] as String
+        val temp = weatherResponse["temp"] as Float
+        val maxTemp = weatherResponse["maxTemp"] as Float
+        val minTemp = weatherResponse["minTemp"] as Float
+        val rise = weatherResponse["rise"] as String
+        val set = weatherResponse["set"] as String
+        
+        calloutContent.text = getString(R.string.callout_text, name, temp, DEGREE, maxTemp, DEGREE, minTemp, DEGREE, rise, set)
         mapCallout = mapView.callout
         mapCallout.content = calloutContent
         mapCallout.setGeoElement(locationGraphic, mapPoint)
