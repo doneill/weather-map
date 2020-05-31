@@ -1,5 +1,7 @@
 package com.jdoneill.weathermap.ui
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 import com.esri.arcgisruntime.geometry.Point
@@ -20,6 +22,11 @@ class MainViewModel(private val map: ArcGISMap) : ViewModel() {
         // the map to pass the the model
         val FACTORY = singleArgViewModelFactory(::MainViewModel)
     }
+
+    private val _snackBar = MutableLiveData<String?>()
+
+    val snackbar: LiveData<String?>
+        get() = _snackBar
 
     /**
      * Get weather from location

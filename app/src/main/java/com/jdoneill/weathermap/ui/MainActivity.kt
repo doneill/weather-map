@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
 import com.esri.arcgisruntime.geometry.Point
@@ -22,6 +23,7 @@ import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.esri.arcgisruntime.mapping.Basemap
 import com.esri.arcgisruntime.mapping.view.*
 import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
+import com.google.android.material.snackbar.Snackbar
 
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
@@ -35,15 +37,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 import org.jetbrains.anko.selector
-import org.jetbrains.anko.toast
 
 const val APIKEY = BuildConfig.API_KEY
 // degree sign
 const val DEGREE: String = "\u00B0"
 
 class MainActivity : AppCompatActivity(), AnkoLogger {
+
+    companion object {
+        const val EXTRA_LATLNG: String = "com.jdoneill.placesearch.LATLNG"
+    }
 
     // mapping
     private lateinit var map: ArcGISMap
@@ -61,6 +65,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         setSupportActionBar(toolbar)
 
         val extras = intent.extras
@@ -89,7 +94,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     showCallout(weatherResponse, placePnt, mapOverlay)
                 }
             }
-        } else {
+        }
+        else if (locationDisplay.isStarted) {
             map.addDoneLoadingListener {
                 val centerPnt = locationDisplay.location.position
 
@@ -192,8 +198,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         // turn on/off location display
         locationFab.setOnClickListener {
             if (locationDisplay.isStarted) {
-                locationDisplay.stop()
-            } else {
                 // clear any graphics and callouts
                 mapOverlay.graphics.clear()
                 mapView.callout.dismiss()
@@ -207,6 +211,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                         showCallout(weatherResponse, centerPnt, mapOverlay)
                     }
                 }
+            } else {
+                viewModel.displayMessage(getString(R.string.location_settings))
             }
         }
 
@@ -216,6 +222,13 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             val heightDelta = bottom - oldBottom
             params.bottomMargin += heightDelta
         }
+
+        viewModel.snackbar.observe(this, Observer {
+            it?.let {
+                Snackbar.make(mapView, it, Snackbar.LENGTH_SHORT).show()
+                viewModel.onSnackbarShown()
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -255,7 +268,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             locationDisplay.startAsync()
         } else {
-            toast("denied")
+            viewModel.displayMessage(getString(R.string.location_settings))
         }
     }
 
@@ -324,7 +337,4 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         startActivity(intent)
     }
 
-    companion object {
-        const val EXTRA_LATLNG: String = "com.jdoneill.placesearch.LATLNG"
-    }
 }
