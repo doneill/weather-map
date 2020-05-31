@@ -2,13 +2,19 @@ package com.jdoneill.weathermap.data
 
 import com.google.gson.annotations.SerializedName
 
-class Weather {
+class WeatherData {
 
     @SerializedName("name")
     var name: String = ""
 
+    var weather = arrayListOf<Weather>()
     var main: Main = Main()
     var sys: Sys = Sys()
+}
+
+class Weather {
+    var name: String = ""
+    var description: String = ""
 }
 
 class Main {

@@ -2,7 +2,7 @@ package com.jdoneill.weathermap.presenter
 
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.data.Constants
-import com.jdoneill.weathermap.data.Weather
+import com.jdoneill.weathermap.data.WeatherData
 import com.jdoneill.weathermap.service.WeatherService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -16,7 +16,7 @@ class WeatherClient {
      * @lat coordinate latitude
      * @lon coordinate longitude
      */
-    suspend fun getWeatherForCoord(lat: Float, lon: Float): Weather {
+    suspend fun getWeatherForCoord(lat: Float, lon: Float): WeatherData {
         val network = Retrofit.Builder()
                 .baseUrl(Constants.HTTP_API_OPENWEATHERMAP_URL)
                 .addConverterFactory(GsonConverterFactory.create())

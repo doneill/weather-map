@@ -29,7 +29,7 @@ import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
 
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
-import com.jdoneill.weathermap.data.Weather
+import com.jdoneill.weathermap.data.WeatherData
 import com.jdoneill.weathermap.presenter.WeatherClient
 import com.jdoneill.weathermap.util.GeometryUtil
 
@@ -44,6 +44,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.toast
+import timber.log.Timber
 
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -284,15 +285,20 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
     /**
      * Present the weather data in a Callout
      *
-     * @param weather weather data
+     * @param weatherData weather data
      * @param mapPoint location to show Callout
      * @param dataOverlay GraphicsOverlay to add Marker
      */
-    private fun presentData(weather: Weather, mapPoint: Point, dataOverlay: GraphicsOverlay) = with(weather) {
+    private fun presentData(weatherData: WeatherData, mapPoint: Point, dataOverlay: GraphicsOverlay) = with(weatherData) {
         val cityName = name
         val temp = main.temp
         val highTemp = main.minTemp
         val lowTemp = main.maxTemp
+
+        val weather = weather
+        for (info in weather) {
+            Timber.d("Weather Info: name:%s description:%s", info.name, info.description)
+        }
 
         val sunrise = sys.sunrise.times(1000)
         val sunset = sys.sunset.times(1000)
