@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReferences
@@ -30,7 +31,6 @@ import com.esri.arcgisruntime.symbology.SimpleMarkerSymbol
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
 import com.jdoneill.weathermap.data.WeatherData
-import com.jdoneill.weathermap.presenter.WeatherClient
 import com.jdoneill.weathermap.util.GeometryUtil
 
 import kotlinx.android.synthetic.main.activity_main.*
@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
     // mapping
     private lateinit var map: ArcGISMap
+    private lateinit var viewModel: MainViewModel
     private lateinit var mapOverlay: GraphicsOverlay
     private lateinit var mapCallout: Callout
     private lateinit var locationDisplay: LocationDisplay
@@ -77,6 +78,8 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
 
         map = ArcGISMap(Basemap.createLightGrayCanvasVector())
         mapView.map = map
+
+        viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map)).get(MainViewModel::class.java)
         // graphics overlay for tapped location marker
         mapOverlay = addGraphicsOverlay(mapView)
 
@@ -91,11 +94,22 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
             // create arcgis point
             val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
             // get the weather
-            weatherAtLocation(placePnt, mapOverlay)
+            CoroutineScope(Dispatchers.IO).launch {
+                val weather = viewModel.weatherAtLocation(placePnt)
+                withContext(Dispatchers.Main) {
+                    presentData(weather, placePnt, mapOverlay)
+                }
+            }
         } else {
             map.addDoneLoadingListener {
                 val centerPnt = locationDisplay.location.position
-                weatherAtLocation(centerPnt, mapOverlay)
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val weather = viewModel.weatherAtLocation(centerPnt)
+                    withContext(Dispatchers.Main) {
+                        presentData(weather, centerPnt, mapOverlay)
+                    }
+                }
             }
         }
 
@@ -177,7 +191,12 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 // create a mMap point from screen point
                 val mapPoint: Point = mapView.screenToLocation(screenPoint)
                 // get the weather at tapped location
-                weatherAtLocation(mapPoint, mapOverlay)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val weather = viewModel.weatherAtLocation(mapPoint)
+                    withContext(Dispatchers.Main) {
+                        presentData(weather, mapPoint, mapOverlay)
+                    }
+                }
             }
         }
 
@@ -193,7 +212,12 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                 locationDisplay.startAsync()
                 // zoom to location and display weather
                 val centerPnt = locationDisplay.location.position
-                weatherAtLocation(centerPnt, mapOverlay)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val weather = viewModel.weatherAtLocation(centerPnt)
+                    withContext(Dispatchers.Main) {
+                        presentData(weather, centerPnt, mapOverlay)
+                    }
+                }
             }
         }
 
@@ -257,29 +281,6 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
         // add overlay to MapView
         mapView.graphicsOverlays.add(graphicsOverlay)
         return graphicsOverlay
-    }
-
-    /**
-     * Get weather from location
-     *
-     * @param location Location as Point
-     */
-    private fun weatherAtLocation(location: Point, graphicOverlay: GraphicsOverlay) {
-        // check incoming location sr for api compatibility
-        val wgs84Pnt = if (location.spatialReference != SpatialReferences.getWgs84()) {
-            GeometryUtil.convertToWgs84(location)
-        } else {
-            location
-        }
-
-        val network = WeatherClient()
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val weather = network.getWeatherForCoord(wgs84Pnt.y.toFloat(), wgs84Pnt.x.toFloat())
-            withContext(Dispatchers.Main) {
-                presentData(weather, location, graphicOverlay)
-            }
-        }
     }
 
     /**
