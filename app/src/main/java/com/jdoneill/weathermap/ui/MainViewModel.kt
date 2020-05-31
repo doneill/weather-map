@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReferences
+import com.esri.arcgisruntime.layers.WebTiledLayer
 import com.esri.arcgisruntime.mapping.ArcGISMap
 
 import com.jdoneill.weathermap.presenter.WeatherClient
@@ -63,5 +64,22 @@ class MainViewModel(private val map: ArcGISMap) : ViewModel() {
         response["set"] = set
 
         return response
+    }
+
+    fun loadWeatherLayer(type: String): WebTiledLayer {
+        val subDomains = listOf("a")
+        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/$type/{level}/{col}/{row}.png?appid=$APIKEY"
+
+        val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
+        openPrecipLayer.loadAsync()
+        return openPrecipLayer
+    }
+
+    fun displayMessage(message: String) {
+        _snackBar.value = message
+    }
+
+    fun onSnackbarShown() {
+        _snackBar.value = null
     }
 }

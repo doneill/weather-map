@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 
 import com.esri.arcgisruntime.geometry.Point
 import com.esri.arcgisruntime.geometry.SpatialReferences
-import com.esri.arcgisruntime.layers.WebTiledLayer
 import com.esri.arcgisruntime.loadable.LoadStatus
 import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.esri.arcgisruntime.mapping.Basemap
@@ -131,13 +130,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     // add precipitation layer
                     weatherLayer[i] == "Precipitation" -> {
                         map.operationalLayers.clear()
-                        // add open weather precipitation layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/precipitation_new/{level}/{col}/{row}.png?appid=$APIKEY"
-                        val openPrecipLayer = WebTiledLayer(templateUri, subDomains)
-                        openPrecipLayer.loadAsync()
+                        val openPrecipLayer = viewModel.loadWeatherLayer("precipitation_new")
+
                         openPrecipLayer.addDoneLoadingListener {
                             if (openPrecipLayer.loadStatus == LoadStatus.LOADED) {
-                                info { "Open precip layer loaded" }
                                 map.operationalLayers.add(openPrecipLayer)
                             }
                         }
@@ -147,13 +143,10 @@ class MainActivity : AppCompatActivity(), AnkoLogger {
                     // add temperature layer
                     weatherLayer[i] == "Temperature" -> {
                         map.operationalLayers.clear()
-                        // add open weather temperature layer
-                        val templateUri = "http://{subDomain}.tile.openweathermap.org/map/temp_new/{level}/{col}/{row}.png?appid=$APIKEY"
-                        val openTempLayer = WebTiledLayer(templateUri, subDomains)
-                        openTempLayer.loadAsync()
+                        val openTempLayer = viewModel.loadWeatherLayer("temp_new")
+
                         openTempLayer.addDoneLoadingListener {
                             if (openTempLayer.loadStatus == LoadStatus.LOADED) {
-                                info { "Open precip layer loaded" }
                                 map.operationalLayers.add(openTempLayer)
                             }
                         }
