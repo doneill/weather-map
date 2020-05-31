@@ -7,7 +7,7 @@ An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime
 
 ## Dependencies
 - [Kotlin Anko](https://github.com/Kotlin/anko)
-= [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html)
+- [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html)
 - [ArcGIS Android](https://developers.arcgis.com/android/)
 - [Google Places API](https://developers.google.com/places/web-service/intro)
 - [Open Weather Map](https://openweathermap.org/)
