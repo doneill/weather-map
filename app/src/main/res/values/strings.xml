@@ -4,6 +4,7 @@
     <string name="place_search">Search</string>
     <string name="location_settings">Location Disabled: Reset in App Settings</string>
     <!-- Open Weather Map Layers -->
+    <string name="layer_title">Weather Layers</string>
     <string name="layer_clear">Clear Layers</string>
     <string name="layer_precip">Precipitation</string>
     <string name="layer_temp">Temperature</string>

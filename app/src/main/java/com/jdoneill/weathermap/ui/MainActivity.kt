@@ -120,10 +120,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         // weather layer selector
-        val weatherLayer = listOf("Clear Layers", "Precipitation", "Temperature")
+        val weatherLayer = listOf(
+                                            getString(R.string.layer_clear),
+                                            getString(R.string.layer_precip),
+                                            getString(R.string.layer_temp) )
 
         layerFab.setOnClickListener {
-            selector("Weather Layers", weatherLayer) { _, i ->
+            selector(getString(R.string.layer_title), weatherLayer) { _, i ->
                 when {
                     // clear all layers
                     weatherLayer[i] == "Clear Layers" -> map.operationalLayers.clear()
