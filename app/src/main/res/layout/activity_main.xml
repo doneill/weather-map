@@ -22,6 +22,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/layerFab"
+        android:contentDescription="Map Layer Button"
         style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +30,7 @@
         android:layout_marginTop="@dimen/fab_layer_margin"
         android:layout_marginEnd="@dimen/fab_margin"
         android:elevation="@dimen/fab_elevation"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/primary_light"
         app:fabSize="mini"
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="top|end"
@@ -39,13 +40,14 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/locationFab"
+        android:contentDescription="Location Button"
         style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         android:elevation="@dimen/fab_elevation"
-        app:backgroundTint="@color/colorAccent"
+        app:backgroundTint="@color/primary_light"
         app:srcCompat="@android:drawable/ic_menu_mylocation"
         app:useCompatPadding="true" />
 

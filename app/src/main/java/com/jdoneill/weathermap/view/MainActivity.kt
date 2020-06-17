@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
         val extras = intent.extras
 
-        map = ArcGISMap(Basemap.createOpenStreetMap())
+        map = ArcGISMap(Basemap.createLightGrayCanvas())
         mapView.map = map
 
         viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map)).get(MainViewModel::class.java)
