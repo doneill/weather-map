@@ -194,19 +194,7 @@ class MainActivity : AppCompatActivity() {
         // turn on/off location display
         locationFab.setOnClickListener {
             if (locationDisplay.isStarted) {
-                // clear any graphics and callouts
-                mapOverlay.graphics.clear()
-                mapView.callout.dismiss()
-                // start location display
-                locationDisplay.startAsync()
-                // zoom to location and display weather
-                val centerPnt = locationDisplay.location.position
-                CoroutineScope(Dispatchers.IO).launch {
-                    val weatherResponse = viewModel.weatherDataResponse(centerPnt)
-                    withContext(Dispatchers.Main) {
-                        showCallout(weatherResponse, centerPnt, mapOverlay)
-                    }
-                }
+                zoomToLocation()
             } else {
                 viewModel.displayMessage(getString(R.string.location_settings))
             }
