@@ -72,6 +72,9 @@ class MainActivity : AppCompatActivity() {
         map = ArcGISMap(Basemap.createLightGrayCanvas())
         mapView.map = map
 
+        viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map))
+                .get(MainViewModel::class.java)
+
         mapOverlay = addGraphicsOverlay(mapView)
         locationDisplay = mapView.locationDisplay
 
@@ -94,9 +97,6 @@ class MainActivity : AppCompatActivity() {
         else if (locationDisplay.isStarted) {
             zoomToLocation(locationDisplay.location.position)
         }
-
-        viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map))
-                .get(MainViewModel::class.java)
 
         val weatherLayerTypes = getWeatherLayerTypes()
 
