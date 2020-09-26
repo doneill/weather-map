@@ -56,9 +56,12 @@ class MainActivity : AppCompatActivity() {
     // menu items
     private lateinit var placeSearchItem: MenuItem
     // runtime permissions
-    private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-    // subdomains for web tiled layer
-    private var subDomains = listOf("a")
+    private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                                                        Manifest.permission.ACCESS_COARSE_LOCATION)
+
+    //----------------------------------------------------------------------------------------------
+    // lifecycle methods
+    //----------------------------------------------------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,106 +69,51 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        val extras = intent.extras
-
         map = ArcGISMap(Basemap.createLightGrayCanvas())
         mapView.map = map
 
-        viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map)).get(MainViewModel::class.java)
-        // graphics overlay for tapped location marker
         mapOverlay = addGraphicsOverlay(mapView)
-
-        // get the MapView location display
         locationDisplay = mapView.locationDisplay
 
-        if (extras != null) {
-            val lat: Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE)
-            val lon: Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE)
-            mapOverlay.graphics.clear()
-            mapView.callout.dismiss()
-            // create arcgis point
-            val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
-            // get the weather
-            CoroutineScope(Dispatchers.IO).launch {
-                val weatherResponse = viewModel.weatherDataResponse(placePnt)
-                withContext(Dispatchers.Main) {
-                    showCallout(weatherResponse, placePnt, mapOverlay)
-                }
-            }
-        }
-        else if (locationDisplay.isStarted) {
-            map.addDoneLoadingListener {
-                val centerPnt = locationDisplay.location.position
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val weatherResponse = viewModel.weatherDataResponse(centerPnt)
-                    withContext(Dispatchers.Main) {
-                        showCallout(weatherResponse, centerPnt, mapOverlay)
-                    }
-                }
-            }
-        }
-
-        // permission state
-        val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
-        val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) == PackageManager.PERMISSION_GRANTED)
-        // check if permissions needed
+        val permFineLoc = (ContextCompat.checkSelfPermission(
+                this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
+        val permCoarseLoc = (ContextCompat.checkSelfPermission(
+                this@MainActivity, reqPermissions[1]) == PackageManager.PERMISSION_GRANTED)
         if (permFineLoc && permCoarseLoc) {
-            // have required permissions
             locationDisplay.startAsync()
         } else {
-            // request permissions at runtime
             val requestCode = 2
             ActivityCompat.requestPermissions(this@MainActivity, reqPermissions, requestCode)
         }
 
-        // weather layer selector
-        val weatherLayer = listOf(
-                                            getString(R.string.layer_clear),
-                                            getString(R.string.layer_precip),
-                                            getString(R.string.layer_temp) )
+        val extras = intent.extras
+        if (extras != null) {
+            zoomToPlaceResult(extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE),
+                    extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE))
+        }
+        else if (locationDisplay.isStarted) {
+            zoomToLocation(locationDisplay.location.position)
+        }
+
+        viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map))
+                .get(MainViewModel::class.java)
+
+        val weatherLayerTypes = getWeatherLayerTypes()
 
         layerFab.setOnClickListener {
-            selector(getString(R.string.layer_title), weatherLayer) { _, i ->
+            selector(getString(R.string.layer_title), weatherLayerTypes) { _, i ->
                 when {
-                    // clear all layers
-                    weatherLayer[i] == "Clear Layers" -> map.operationalLayers.clear()
-                    // add precipitation layer
-                    weatherLayer[i] == "Precipitation" -> {
-                        map.operationalLayers.clear()
-                        val openPrecipLayer = viewModel.loadWeatherLayer("precipitation_new")
-
-                        openPrecipLayer.addDoneLoadingListener {
-                            if (openPrecipLayer.loadStatus == LoadStatus.LOADED) {
-                                map.operationalLayers.add(openPrecipLayer)
-                            }
-                        }
-                        // zoom out to see layer
-                        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
-                    }
-                    // add temperature layer
-                    weatherLayer[i] == "Temperature" -> {
-                        map.operationalLayers.clear()
-                        val openTempLayer = viewModel.loadWeatherLayer("temp_new")
-
-                        openTempLayer.addDoneLoadingListener {
-                            if (openTempLayer.loadStatus == LoadStatus.LOADED) {
-                                map.operationalLayers.add(openTempLayer)
-                            }
-                        }
-                        // zoom out to see layer
-                        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
-                    }
+                    weatherLayerTypes[i] == "Clear Layers" -> map.operationalLayers.clear()
+                    weatherLayerTypes[i] == "Precipitation" -> addOperationalLayer("precipitation_new")
+                    weatherLayerTypes[i] == "Temperature" -> addOperationalLayer("temp_new")
                 }
             }
         }
 
-        // respond to mapview interactions
         mapView.onTouchListener = object : DefaultMapViewOnTouchListener(this, mapView) {
 
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
                 if (mapView.callout.isShowing) {
-                    // clear any graphics and callouts
                     mapOverlay.graphics.clear()
                     mapView.callout.dismiss()
                 }
@@ -174,39 +122,17 @@ class MainActivity : AppCompatActivity() {
 
             override fun onLongPress(motionEvent: MotionEvent?) {
                 super.onLongPress(motionEvent)
-                // clear any graphics and callouts
-                mapOverlay.graphics.clear()
-                mapView.callout.dismiss()
-                // get the point that was clicked and convert it to a point in mMap coordinates
-                val screenPoint: android.graphics.Point = android.graphics.Point(motionEvent!!.x.toInt(), motionEvent.y.toInt())
-                // create a mMap point from screen point
-                val mapPoint: Point = mapView.screenToLocation(screenPoint)
-                // get the weather at tapped location
-                CoroutineScope(Dispatchers.IO).launch {
-                    val weatherResponse = viewModel.weatherDataResponse(mapPoint)
-                    withContext(Dispatchers.Main) {
-                        showCallout(weatherResponse, mapPoint, mapOverlay)
-                    }
-                }
+
+                val screenPoint: android.graphics.Point = android.graphics.Point(
+                        motionEvent!!.x.toInt(), motionEvent.y.toInt())
+                zoomToLocation(mapView.screenToLocation(screenPoint))
             }
         }
 
         // turn on/off location display
         locationFab.setOnClickListener {
             if (locationDisplay.isStarted) {
-                // clear any graphics and callouts
-                mapOverlay.graphics.clear()
-                mapView.callout.dismiss()
-                // start location display
-                locationDisplay.startAsync()
-                // zoom to location and display weather
-                val centerPnt = locationDisplay.location.position
-                CoroutineScope(Dispatchers.IO).launch {
-                    val weatherResponse = viewModel.weatherDataResponse(centerPnt)
-                    withContext(Dispatchers.Main) {
-                        showCallout(weatherResponse, centerPnt, mapOverlay)
-                    }
-                }
+                zoomToLocation(locationDisplay.location.position)
             } else {
                 viewModel.displayMessage(getString(R.string.location_settings))
             }
@@ -268,11 +194,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Create a Graphics Overlay
-     *
-     * @param mapView MapView to add the graphics overlay to
-     */
+    //----------------------------------------------------------------------------------------------
+    // private methods
+    //----------------------------------------------------------------------------------------------
+
+    private fun getWeatherLayerTypes(): List<String> {
+        return listOf(getString(R.string.layer_clear),
+                getString(R.string.layer_precip),
+                getString(R.string.layer_temp) )
+    }
+
+    private fun addOperationalLayer(type: String) {
+        map.operationalLayers.clear()
+        val openPrecipLayer = viewModel.loadWeatherLayer(type)
+
+        openPrecipLayer.addDoneLoadingListener {
+            if (openPrecipLayer.loadStatus == LoadStatus.LOADED) {
+                map.operationalLayers.add(openPrecipLayer)
+            }
+        }
+        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+    }
+
     private fun addGraphicsOverlay(mapView: MapView): GraphicsOverlay {
         // create graphics overlay
         val graphicsOverlay = GraphicsOverlay()
@@ -281,14 +224,35 @@ class MainActivity : AppCompatActivity() {
         return graphicsOverlay
     }
 
-    /**
-     * Present the weather data in a Callout
-     *
-     * @param weatherResponse weather data response text
-     * @param mapPoint location to show Callout
-     * @param dataOverlay GraphicsOverlay to add Marker
-     */
-    private fun showCallout(weatherResponse: Map<String, Any>, mapPoint: Point, dataOverlay: GraphicsOverlay) {
+    private fun zoomToPlaceResult(lon: Double, lat: Double) {
+        mapOverlay.graphics.clear()
+        mapView.callout.dismiss()
+        // create arcgis point
+        val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
+        // get the weather
+        CoroutineScope(Dispatchers.IO).launch {
+            val weatherResponse = viewModel.weatherDataResponse(placePnt)
+            withContext(Dispatchers.Main) {
+                zoomToMarkerWithCallout(weatherResponse, placePnt, mapOverlay)
+            }
+        }
+    }
+
+    private fun zoomToLocation(point: Point) {
+        mapOverlay.graphics.clear()
+        mapView.callout.dismiss()
+
+        locationDisplay.startAsync()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val weatherResponse = viewModel.weatherDataResponse(point)
+            withContext(Dispatchers.Main) {
+                zoomToMarkerWithCallout(weatherResponse, point, mapOverlay)
+            }
+        }
+    }
+
+    private fun zoomToMarkerWithCallout(weatherResponse: Map<String, Any>, mapPoint: Point, dataOverlay: GraphicsOverlay) {
         // create a marker at tapped location
         val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 15.0f)
         val locationGraphic = Graphic(mapPoint, locationMarker)
@@ -319,9 +283,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Notification on selected place
-     */
     private fun openPlaceSearchActivity() {
         val intent = Intent(this, PlaceSearchActivity::class.java)
 
