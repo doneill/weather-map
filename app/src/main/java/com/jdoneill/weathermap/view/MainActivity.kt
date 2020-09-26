@@ -124,6 +124,14 @@ class MainActivity : AppCompatActivity() {
                                             getString(R.string.layer_clear),
                                             getString(R.string.layer_precip),
                                             getString(R.string.layer_temp) )
+        val extras = intent.extras
+        if (extras != null) {
+            zoomToPlaceResult(extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE),
+                    extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE))
+        }
+        else if (locationDisplay.isStarted) {
+            zoomToLocation()
+        }
 
         layerFab.setOnClickListener {
             selector(getString(R.string.layer_title), weatherLayer) { _, i ->
