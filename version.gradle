@@ -22,7 +22,7 @@ ext {
     retrofitVersion = '2.9.0'
     timberVersion = '4.7.1'
     // test dependencies
-    andXJunitVersion = '1.1.1'
+    andXJunitVersion = '1.1.2'
     archLifecycleVersion = '2.1.0'
     junitVersion = '4.13'
     // plugin versions
