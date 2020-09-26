@@ -31,5 +31,10 @@ This app supports autocomplete service in the Google Places API, you must regist
 PLACES_API_KEY = "YOUR-API-KEY"
 ```
 
+## Contributors
+<a href="https://github.com/doneill/weather-map/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=doneill/weather-map" />
+</a>
+
 ## Licensing
 A copy of the license is available in the repository's [LICENSE](LICENSE) file.
