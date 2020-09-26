@@ -1,9 +1,5 @@
 sudo: required
 
-#branches:
-#  only:
-#    - master # build master branch only
-
 services:
   - docker
 
