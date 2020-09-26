@@ -119,11 +119,6 @@ class MainActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this@MainActivity, reqPermissions, requestCode)
         }
 
-        // weather layer selector
-        val weatherLayer = listOf(
-                                            getString(R.string.layer_clear),
-                                            getString(R.string.layer_precip),
-                                            getString(R.string.layer_temp) )
         val extras = intent.extras
         if (extras != null) {
             zoomToPlaceResult(extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE),
@@ -133,37 +128,17 @@ class MainActivity : AppCompatActivity() {
             zoomToLocation()
         }
 
+        viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map))
+                .get(MainViewModel::class.java)
+
+        val weatherLayerTypes = getWeatherLayerTypes()
+
         layerFab.setOnClickListener {
-            selector(getString(R.string.layer_title), weatherLayer) { _, i ->
+            selector(getString(R.string.layer_title), weatherLayerTypes) { _, i ->
                 when {
-                    // clear all layers
-                    weatherLayer[i] == "Clear Layers" -> map.operationalLayers.clear()
-                    // add precipitation layer
-                    weatherLayer[i] == "Precipitation" -> {
-                        map.operationalLayers.clear()
-                        val openPrecipLayer = viewModel.loadWeatherLayer("precipitation_new")
-
-                        openPrecipLayer.addDoneLoadingListener {
-                            if (openPrecipLayer.loadStatus == LoadStatus.LOADED) {
-                                map.operationalLayers.add(openPrecipLayer)
-                            }
-                        }
-                        // zoom out to see layer
-                        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
-                    }
-                    // add temperature layer
-                    weatherLayer[i] == "Temperature" -> {
-                        map.operationalLayers.clear()
-                        val openTempLayer = viewModel.loadWeatherLayer("temp_new")
-
-                        openTempLayer.addDoneLoadingListener {
-                            if (openTempLayer.loadStatus == LoadStatus.LOADED) {
-                                map.operationalLayers.add(openTempLayer)
-                            }
-                        }
-                        // zoom out to see layer
-                        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
-                    }
+                    weatherLayerTypes[i] == "Clear Layers" -> map.operationalLayers.clear()
+                    weatherLayerTypes[i] == "Precipitation" -> addOperationalLayer("precipitation_new")
+                    weatherLayerTypes[i] == "Temperature" -> addOperationalLayer("temp_new")
                 }
             }
         }
