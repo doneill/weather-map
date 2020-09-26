@@ -18,8 +18,8 @@ ext {
     lifecycleVersion = '2.2.0'
     logbackVersion = '1.2.3'
     materialVersion = '1.2.1'
-    okhttpVersion = '3.14.2'
-    retrofitVersion = '2.6.3'
+    okhttpVersion = '4.0.1'
+    retrofitVersion = '2.9.0'
     timberVersion = '4.7.1'
     // test dependencies
     andXJunitVersion = '1.1.1'
