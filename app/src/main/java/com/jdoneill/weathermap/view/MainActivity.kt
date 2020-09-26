@@ -56,9 +56,12 @@ class MainActivity : AppCompatActivity() {
     // menu items
     private lateinit var placeSearchItem: MenuItem
     // runtime permissions
-    private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-    // subdomains for web tiled layer
-    private var subDomains = listOf("a")
+    private var reqPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                                                        Manifest.permission.ACCESS_COARSE_LOCATION)
+
+    //----------------------------------------------------------------------------------------------
+    // lifecycle methods
+    //----------------------------------------------------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,55 +69,19 @@ class MainActivity : AppCompatActivity() {
 
         setSupportActionBar(toolbar)
 
-        val extras = intent.extras
-
         map = ArcGISMap(Basemap.createLightGrayCanvas())
         mapView.map = map
 
-        viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map)).get(MainViewModel::class.java)
-        // graphics overlay for tapped location marker
         mapOverlay = addGraphicsOverlay(mapView)
-
-        // get the MapView location display
         locationDisplay = mapView.locationDisplay
 
-        if (extras != null) {
-            val lat: Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE)
-            val lon: Double = extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LONGITUDE)
-            mapOverlay.graphics.clear()
-            mapView.callout.dismiss()
-            // create arcgis point
-            val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
-            // get the weather
-            CoroutineScope(Dispatchers.IO).launch {
-                val weatherResponse = viewModel.weatherDataResponse(placePnt)
-                withContext(Dispatchers.Main) {
-                    showCallout(weatherResponse, placePnt, mapOverlay)
-                }
-            }
-        }
-        else if (locationDisplay.isStarted) {
-            map.addDoneLoadingListener {
-                val centerPnt = locationDisplay.location.position
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val weatherResponse = viewModel.weatherDataResponse(centerPnt)
-                    withContext(Dispatchers.Main) {
-                        showCallout(weatherResponse, centerPnt, mapOverlay)
-                    }
-                }
-            }
-        }
-
-        // permission state
-        val permFineLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
-        val permCoarseLoc = (ContextCompat.checkSelfPermission(this@MainActivity, reqPermissions[1]) == PackageManager.PERMISSION_GRANTED)
-        // check if permissions needed
+        val permFineLoc = (ContextCompat.checkSelfPermission(
+                this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
+        val permCoarseLoc = (ContextCompat.checkSelfPermission(
+                this@MainActivity, reqPermissions[1]) == PackageManager.PERMISSION_GRANTED)
         if (permFineLoc && permCoarseLoc) {
-            // have required permissions
             locationDisplay.startAsync()
         } else {
-            // request permissions at runtime
             val requestCode = 2
             ActivityCompat.requestPermissions(this@MainActivity, reqPermissions, requestCode)
         }
@@ -142,8 +109,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-        // respond to mapview interactions
+        
         mapView.onTouchListener = object : DefaultMapViewOnTouchListener(this, mapView) {
 
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
@@ -161,7 +127,8 @@ class MainActivity : AppCompatActivity() {
                 mapOverlay.graphics.clear()
                 mapView.callout.dismiss()
                 // get the point that was clicked and convert it to a point in mMap coordinates
-                val screenPoint: android.graphics.Point = android.graphics.Point(motionEvent!!.x.toInt(), motionEvent.y.toInt())
+                val screenPoint: android.graphics.Point = android.graphics.Point(
+                        motionEvent!!.x.toInt(), motionEvent.y.toInt())
                 // create a mMap point from screen point
                 val mapPoint: Point = mapView.screenToLocation(screenPoint)
                 // get the weather at tapped location
@@ -331,9 +298,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Notification on selected place
-     */
     private fun openPlaceSearchActivity() {
         val intent = Intent(this, PlaceSearchActivity::class.java)
 
