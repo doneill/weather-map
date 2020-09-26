@@ -268,11 +268,59 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Create a Graphics Overlay
-     *
-     * @param mapView MapView to add the graphics overlay to
-     */
+    //----------------------------------------------------------------------------------------------
+    // private methods
+    //----------------------------------------------------------------------------------------------
+
+    private fun getWeatherLayerTypes(): List<String> {
+        return listOf(getString(R.string.layer_clear),
+                getString(R.string.layer_precip),
+                getString(R.string.layer_temp) )
+    }
+
+    private fun addOperationalLayer(type: String) {
+        map.operationalLayers.clear()
+        val openPrecipLayer = viewModel.loadWeatherLayer(type)
+
+        openPrecipLayer.addDoneLoadingListener {
+            if (openPrecipLayer.loadStatus == LoadStatus.LOADED) {
+                map.operationalLayers.add(openPrecipLayer)
+            }
+        }
+        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+    }
+
+    private fun zoomToPlaceResult(lon: Double, lat: Double) {
+        mapOverlay.graphics.clear()
+        mapView.callout.dismiss()
+        // create arcgis point
+        val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
+        // get the weather
+        CoroutineScope(Dispatchers.IO).launch {
+            val weatherResponse = viewModel.weatherDataResponse(placePnt)
+            withContext(Dispatchers.Main) {
+                showCallout(weatherResponse, placePnt, mapOverlay)
+            }
+        }
+    }
+
+    private fun zoomToLocation() {
+        // clear any graphics and callouts
+        mapOverlay.graphics.clear()
+        mapView.callout.dismiss()
+        // start location display
+        locationDisplay.startAsync()
+        // zoom to location and display weather
+        val centerPnt = locationDisplay.location.position
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val weatherResponse = viewModel.weatherDataResponse(centerPnt)
+            withContext(Dispatchers.Main) {
+                showCallout(weatherResponse, centerPnt, mapOverlay)
+            }
+        }
+    }
+
     private fun addGraphicsOverlay(mapView: MapView): GraphicsOverlay {
         // create graphics overlay
         val graphicsOverlay = GraphicsOverlay()
@@ -281,13 +329,6 @@ class MainActivity : AppCompatActivity() {
         return graphicsOverlay
     }
 
-    /**
-     * Present the weather data in a Callout
-     *
-     * @param weatherResponse weather data response text
-     * @param mapPoint location to show Callout
-     * @param dataOverlay GraphicsOverlay to add Marker
-     */
     private fun showCallout(weatherResponse: Map<String, Any>, mapPoint: Point, dataOverlay: GraphicsOverlay) {
         // create a marker at tapped location
         val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 15.0f)
