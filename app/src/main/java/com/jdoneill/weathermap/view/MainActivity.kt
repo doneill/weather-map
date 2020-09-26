@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                     extras.getDouble(PlaceSearchActivity.EXTRA_PLACE_LATITUDE))
         }
         else if (locationDisplay.isStarted) {
-            zoomToLocation()
+            zoomToLocation(locationDisplay.location.position)
         }
 
         viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map))
@@ -109,12 +109,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        
+
         mapView.onTouchListener = object : DefaultMapViewOnTouchListener(this, mapView) {
 
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
                 if (mapView.callout.isShowing) {
-                    // clear any graphics and callouts
                     mapOverlay.graphics.clear()
                     mapView.callout.dismiss()
                 }
@@ -123,28 +122,17 @@ class MainActivity : AppCompatActivity() {
 
             override fun onLongPress(motionEvent: MotionEvent?) {
                 super.onLongPress(motionEvent)
-                // clear any graphics and callouts
-                mapOverlay.graphics.clear()
-                mapView.callout.dismiss()
-                // get the point that was clicked and convert it to a point in mMap coordinates
+
                 val screenPoint: android.graphics.Point = android.graphics.Point(
                         motionEvent!!.x.toInt(), motionEvent.y.toInt())
-                // create a mMap point from screen point
-                val mapPoint: Point = mapView.screenToLocation(screenPoint)
-                // get the weather at tapped location
-                CoroutineScope(Dispatchers.IO).launch {
-                    val weatherResponse = viewModel.weatherDataResponse(mapPoint)
-                    withContext(Dispatchers.Main) {
-                        showCallout(weatherResponse, mapPoint, mapOverlay)
-                    }
-                }
+                zoomToLocation(mapView.screenToLocation(screenPoint))
             }
         }
 
         // turn on/off location display
         locationFab.setOnClickListener {
             if (locationDisplay.isStarted) {
-                zoomToLocation()
+                zoomToLocation(locationDisplay.location.position)
             } else {
                 viewModel.displayMessage(getString(R.string.location_settings))
             }
@@ -242,19 +230,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun zoomToLocation() {
-        // clear any graphics and callouts
+    private fun zoomToLocation(point: Point) {
         mapOverlay.graphics.clear()
         mapView.callout.dismiss()
-        // start location display
+
         locationDisplay.startAsync()
-        // zoom to location and display weather
-        val centerPnt = locationDisplay.location.position
 
         CoroutineScope(Dispatchers.IO).launch {
-            val weatherResponse = viewModel.weatherDataResponse(centerPnt)
+            val weatherResponse = viewModel.weatherDataResponse(point)
             withContext(Dispatchers.Main) {
-                showCallout(weatherResponse, centerPnt, mapOverlay)
+                showCallout(weatherResponse, point, mapOverlay)
             }
         }
     }
