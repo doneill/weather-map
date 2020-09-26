@@ -216,6 +216,14 @@ class MainActivity : AppCompatActivity() {
         if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
     }
 
+    private fun addGraphicsOverlay(mapView: MapView): GraphicsOverlay {
+        // create graphics overlay
+        val graphicsOverlay = GraphicsOverlay()
+        // add overlay to MapView
+        mapView.graphicsOverlays.add(graphicsOverlay)
+        return graphicsOverlay
+    }
+
     private fun zoomToPlaceResult(lon: Double, lat: Double) {
         mapOverlay.graphics.clear()
         mapView.callout.dismiss()
@@ -225,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val weatherResponse = viewModel.weatherDataResponse(placePnt)
             withContext(Dispatchers.Main) {
-                showCallout(weatherResponse, placePnt, mapOverlay)
+                zoomToMarkerWithCallout(weatherResponse, placePnt, mapOverlay)
             }
         }
     }
@@ -239,20 +247,12 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val weatherResponse = viewModel.weatherDataResponse(point)
             withContext(Dispatchers.Main) {
-                showCallout(weatherResponse, point, mapOverlay)
+                zoomToMarkerWithCallout(weatherResponse, point, mapOverlay)
             }
         }
     }
 
-    private fun addGraphicsOverlay(mapView: MapView): GraphicsOverlay {
-        // create graphics overlay
-        val graphicsOverlay = GraphicsOverlay()
-        // add overlay to MapView
-        mapView.graphicsOverlays.add(graphicsOverlay)
-        return graphicsOverlay
-    }
-
-    private fun showCallout(weatherResponse: Map<String, Any>, mapPoint: Point, dataOverlay: GraphicsOverlay) {
+    private fun zoomToMarkerWithCallout(weatherResponse: Map<String, Any>, mapPoint: Point, dataOverlay: GraphicsOverlay) {
         // create a marker at tapped location
         val locationMarker = SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 15.0f)
         val locationGraphic = Graphic(mapPoint, locationMarker)
