@@ -26,10 +26,10 @@ import com.google.android.material.snackbar.Snackbar
 
 import com.jdoneill.weathermap.BuildConfig
 import com.jdoneill.weathermap.R
+import com.jdoneill.weathermap.databinding.ActivityMainBinding
+import com.jdoneill.weathermap.databinding.ContentMainBinding
 import com.jdoneill.weathermap.util.GeometryUtil
 
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,6 +47,9 @@ class MainActivity : AppCompatActivity() {
         const val EXTRA_LATLNG: String = "com.jdoneill.placesearch.LATLNG"
     }
 
+    // view biding
+    private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var contentBinding: ContentMainBinding
     // mapping
     private lateinit var map: ArcGISMap
     private lateinit var viewModel: MainViewModel
@@ -65,18 +68,23 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        setSupportActionBar(toolbar)
+        mainBinding = ActivityMainBinding.inflate(layoutInflater)
+        contentBinding = ContentMainBinding.inflate(layoutInflater)
+
+        val view = mainBinding.root
+        setContentView(view)
+
+        setSupportActionBar(mainBinding.toolbar)
 
         map = ArcGISMap(Basemap.createLightGrayCanvas())
-        mapView.map = map
+        contentBinding.mapView.map = map
 
         viewModel = ViewModelProvider(this, MainViewModel.FACTORY(map))
                 .get(MainViewModel::class.java)
 
-        mapOverlay = addGraphicsOverlay(mapView)
-        locationDisplay = mapView.locationDisplay
+        mapOverlay = addGraphicsOverlay(contentBinding.mapView)
+        locationDisplay = contentBinding.mapView.locationDisplay
 
         val permFineLoc = (ContextCompat.checkSelfPermission(
                 this@MainActivity, reqPermissions[0]) == PackageManager.PERMISSION_GRANTED)
@@ -100,7 +108,7 @@ class MainActivity : AppCompatActivity() {
 
         val weatherLayerTypes = getWeatherLayerTypes()
 
-        layerFab.setOnClickListener {
+        mainBinding.layerFab.setOnClickListener {
             selector(getString(R.string.layer_title), weatherLayerTypes) { _, i ->
                 when {
                     weatherLayerTypes[i] == "Clear Layers" -> map.operationalLayers.clear()
@@ -110,12 +118,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        mapView.onTouchListener = object : DefaultMapViewOnTouchListener(this, mapView) {
+        contentBinding.mapView.onTouchListener = object : DefaultMapViewOnTouchListener(this, contentBinding.mapView) {
 
             override fun onSingleTapConfirmed(motionEvent: MotionEvent?): Boolean {
-                if (mapView.callout.isShowing) {
+                if (contentBinding.mapView.callout.isShowing) {
                     mapOverlay.graphics.clear()
-                    mapView.callout.dismiss()
+                    contentBinding.mapView.callout.dismiss()
                 }
                 return super.onSingleTapConfirmed(motionEvent)
             }
@@ -125,12 +133,12 @@ class MainActivity : AppCompatActivity() {
 
                 val screenPoint: android.graphics.Point = android.graphics.Point(
                         motionEvent!!.x.toInt(), motionEvent.y.toInt())
-                zoomToLocation(mapView.screenToLocation(screenPoint))
+                zoomToLocation(contentBinding.mapView.screenToLocation(screenPoint))
             }
         }
 
         // turn on/off location display
-        locationFab.setOnClickListener {
+        mainBinding.locationFab.setOnClickListener {
             if (locationDisplay.isStarted) {
                 zoomToLocation(locationDisplay.location.position)
             } else {
@@ -139,15 +147,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         // allow fab to reposition based on attribution bar layout
-        val params = locationFab.layoutParams as androidx.coordinatorlayout.widget.CoordinatorLayout.LayoutParams
-        mapView.addAttributionViewLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
+        val params = mainBinding.locationFab.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+        contentBinding.mapView.addAttributionViewLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
             val heightDelta = bottom - oldBottom
             params.bottomMargin += heightDelta
         }
 
         viewModel.snackbar.observe(this, Observer {
             it?.let {
-                Snackbar.make(mapView, it, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(contentBinding.mapView, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.onSnackbarShown()
             }
         })
@@ -178,12 +186,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        contentBinding.mapView.pause()
     }
 
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        contentBinding.mapView.resume()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -213,7 +221,7 @@ class MainActivity : AppCompatActivity() {
                 map.operationalLayers.add(openPrecipLayer)
             }
         }
-        if (mapView.mapScale < 4000000.0) mapView.setViewpointScaleAsync(4000000.0)
+        if (contentBinding.mapView.mapScale < 4000000.0) contentBinding.mapView.setViewpointScaleAsync(4000000.0)
     }
 
     private fun addGraphicsOverlay(mapView: MapView): GraphicsOverlay {
@@ -226,7 +234,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun zoomToPlaceResult(lon: Double, lat: Double) {
         mapOverlay.graphics.clear()
-        mapView.callout.dismiss()
+        contentBinding.mapView.callout.dismiss()
         // create arcgis point
         val placePnt = Point(lon, lat, SpatialReferences.getWgs84())
         // get the weather
@@ -240,7 +248,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun zoomToLocation(point: Point) {
         mapOverlay.graphics.clear()
-        mapView.callout.dismiss()
+        contentBinding.mapView.callout.dismiss()
 
         locationDisplay.startAsync()
 
@@ -270,23 +278,23 @@ class MainActivity : AppCompatActivity() {
         val set = weatherResponse["set"] as String
         
         calloutContent.text = getString(R.string.callout_text, name, temp, DEGREE, maxTemp, DEGREE, minTemp, DEGREE, rise, set)
-        mapCallout = mapView.callout
+        mapCallout = contentBinding.mapView.callout
         mapCallout.content = calloutContent
         mapCallout.setGeoElement(locationGraphic, mapPoint)
         mapCallout.show()
         // center on the location, zoom in when scaled out
-        val mapScale = mapView.mapScale
+        val mapScale = contentBinding.mapView.mapScale
         if (mapScale < 350000.0) {
-            mapView.setViewpointCenterAsync(mapPoint)
+            contentBinding.mapView.setViewpointCenterAsync(mapPoint)
         } else {
-            mapView.setViewpointCenterAsync(mapPoint, 10500.0)
+            contentBinding.mapView.setViewpointCenterAsync(mapPoint, 10500.0)
         }
     }
 
     private fun openPlaceSearchActivity() {
         val intent = Intent(this, PlaceSearchActivity::class.java)
 
-        val centerPnt = GeometryUtil.convertToWgs84(mapView.visibleArea.extent.center)
+        val centerPnt = GeometryUtil.convertToWgs84(contentBinding.mapView.visibleArea.extent.center)
         val lat = centerPnt.x.toString()
         val lon = centerPnt.y.toString()
 
