@@ -56,9 +56,9 @@ class MainViewModel(private val map: ArcGISMap) : ViewModel() {
         val sunrise = weatherData.sys.sunrise.times(1000)
         val sunset = weatherData.sys.sunset.times(1000)
 
-        val df = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
-        val rise = df.format(sunrise.let { Date(it).time })
-        val set = df.format(sunset.let { Date(it).time })
+        val sdf = SimpleDateFormat("hh:mm a", Locale.ENGLISH)
+        val rise = sdf.format(sunrise.let { Date(it).time })
+        val set = sdf.format(sunset.let { Date(it).time })
 
         response["rise"] = rise
         response["set"] = set
