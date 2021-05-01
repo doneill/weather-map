@@ -37,7 +37,7 @@ class PlaceSearchActivity : AppCompatActivity(), PlacesListener {
         // get the intent
         val intent = intent
 
-        latLng = intent.getStringExtra(MainActivity.EXTRA_LATLNG)
+        latLng = intent.getStringExtra(MainActivity.EXTRA_LATLNG).toString()
         viewModel = ViewModelProvider(this, PlaceSearchViewModel.FACTORY(latLng)).get(PlaceSearchViewModel::class.java)
 
         placesListView = findViewById(R.id.lvPlaces)
