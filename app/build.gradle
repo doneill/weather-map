@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -19,6 +18,10 @@ android {
 
         project.hasProperty('API_KEY') ? buildConfigField("String", "API_KEY", API_KEY) : buildConfigField("String", "API_KEY", "\"\"")
         project.hasProperty('PLACES_API_KEY') ? buildConfigField("String", "PLACES_API_KEY", PLACES_API_KEY) : buildConfigField("String", "PLACES_API_KEY", "\"\"")
+    }
+
+    buildFeatures {
+        viewBinding true
     }
 
     testOptions {
@@ -42,14 +45,14 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     // For Kotlin projects
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+//    kotlinOptions {
+//        jvmTarget = "11"
+//    }
 
 }
 
@@ -58,8 +61,8 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
     implementation "com.google.android.material:material:$materialVersion"
 
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersionKtx"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersionKtx"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleVersion"
 
     implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
