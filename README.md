@@ -1,5 +1,6 @@
 # Weather Map
-[![Build Status](https://travis-ci.org/doneill/weather-map.svg?branch=master)](https://travis-ci.org/doneill/weather-map) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=doneill_weather-map&metric=alert_status)](https://sonarcloud.io/dashboard?id=doneill_weather-map)
+
+[comment]: <> ([![Build Status]&#40;https://travis-ci.org/doneill/weather-map.svg?branch=master&#41;]&#40;https://travis-ci.org/doneill/weather-map&#41; [![Quality Gate Status]&#40;https://sonarcloud.io/api/project_badges/measure?project=doneill_weather-map&metric=alert_status&#41;]&#40;https://sonarcloud.io/dashboard?id=doneill_weather-map&#41;)
 
 An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime Android APIs using [Kotlin](https://kotlinlang.org/).
 
