@@ -43,7 +43,6 @@ class MainViewModel(private val map: ArcGISMap) : ViewModel() {
         }
 
         val response = mutableMapOf<String, Any>()
-
         val network = WeatherClient()
         val weatherData = network.getWeatherForCoord(wgs84Pnt.y.toFloat(), wgs84Pnt.x.toFloat())
 
