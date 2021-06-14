@@ -1,8 +1,7 @@
 # Weather Map
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=doneill_weather-map&metric=alert_status)](https://sonarcloud.io/dashboard?id=doneill_weather-map)
 
-[comment]: <> ([![Build Status]&#40;https://travis-ci.org/doneill/weather-map.svg?branch=master&#41;]&#40;https://travis-ci.org/doneill/weather-map&#41; [![Quality Gate Status]&#40;https://sonarcloud.io/api/project_badges/measure?project=doneill_weather-map&metric=alert_status&#41;]&#40;https://sonarcloud.io/dashboard?id=doneill_weather-map&#41;)
-
-An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime Android APIs using [Kotlin](https://kotlinlang.org/).
+An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime Android SDK using [Kotlin](https://kotlinlang.org/).
 
 ![weather map image](weather-map.png)
 
@@ -14,22 +13,19 @@ An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime
 - [Open Weather Map](https://openweathermap.org/)
 - [Retrofit](http://square.github.io/retrofit/)
 
-## ArcGIS Runtime SDK for Android
-This app is explicitly intended for development and testing, you can become a member of the [ArcGIS Developer Program](https://developers.arcgis.com/pricing/) for free, more details about licensing your ArcGIS Runtime app can be found [here](https://developers.arcgis.com/arcgis-runtime/licensing/).
+## API Keys
+This app uses 3 developer products that requiring API keys to enable its full capabilities:  
 
-## Open Weather Map
-To access the OpenWeatherMap API you need an [API Key](http://openweathermap.org/appid).  To use your API Key, create a **gradle.properties** file in the root of the **app** module with a string value pair representing your API Key.  This file is not tracked in Git as it is for personal use.
+- [ArcGIS Runtime](https://developers.arcgis.com/documentation/mapping-apis-and-services/security/#api-keys): The mapping engine and coordinate conversion tool
+- [OpenWeather API](https://openweathermap.org/appid): Current weather for location by coordinate or place name
+- [Google Places API](https://developers.google.com/maps/documentation/places/web-service/get-api-key): Search for places with detailed information and autocomplete when user types in search box
 
-```groovy
-API_KEY = "YOUR-API-KEY"
-```
+Once you have registered the app and received your API keys you can use them by creating a **gradle.properties** file in the root of the **app** module with a string value pair representing your API Keys. This file is not tracked in Git to keep personal API keys secret.
 
-## Google Places API
-This app supports autocomplete service in the Google Places API, you must register this app project in your Google API Console and get a Google API key to add to the app. Refer to [Google](https://developers.google.com/places/web-service/get-api-key) about signing up and getting your API keys.  Once you have your key, add it to the **gradle.properties** file created in the section above and append the key as follows:
-
-```groovy
-...
-PLACES_API_KEY = "YOUR-API-KEY"
+```bash
+API_KEY = "YOUR-OPEN-WEATHER-API-KEY"
+PLACES_API_KEY = "YOUR-GOOGLE-PLACES-API-KEY"
+ARCGIS_KEY = "YOUR-ARCGIS-RUNTIME-API-KEY"
 ```
 
 ## Contributors
