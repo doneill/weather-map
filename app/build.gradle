@@ -18,6 +18,7 @@ android {
 
         project.hasProperty('API_KEY') ? buildConfigField("String", "API_KEY", API_KEY) : buildConfigField("String", "API_KEY", "\"\"")
         project.hasProperty('PLACES_API_KEY') ? buildConfigField("String", "PLACES_API_KEY", PLACES_API_KEY) : buildConfigField("String", "PLACES_API_KEY", "\"\"")
+        project.hasProperty('ARCGIS_KEY') ? buildConfigField("String", "ARCGIS_KEY", ARCGIS_KEY) : buildConfigField("String", "ARCGIS_KEY", "\"\"")
     }
 
     buildFeatures {
