@@ -142,18 +142,20 @@ class MainActivity : AppCompatActivity() {
 
         // turn on/off location display
         locationButton.setOnClickListener {
-            if (!locationDisplay.isStarted) {
-                locationDisplay.autoPanMode = LocationDisplay.AutoPanMode.RECENTER
-                locationDisplay.startAsync()
-
-                if (locationDisplay.location != null) {
-                    if (locationDisplay.location.position != null) {
-                        zoomToLocation(locationDisplay.location.position)
+            when {
+                !locationDisplay.isStarted -> {
+                    locationDisplay.autoPanMode = LocationDisplay.AutoPanMode.RECENTER
+                    locationDisplay.startAsync()
+                    when {
+                        locationDisplay.location != null && locationDisplay.location.position != null -> {
+                            zoomToLocation(locationDisplay.location.position)
+                        }
                     }
                 }
-            } else {
-                locationDisplay.stop()
-                viewModel.displayMessage(getString(R.string.location_settings))
+                else -> {
+                    locationDisplay.stop()
+                    viewModel.displayMessage(getString(R.string.location_settings))
+                }
             }
         }
 
