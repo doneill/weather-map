@@ -13,8 +13,8 @@ jobs:
         with:
           java-version: 11
 
-      - name: Scan Project
-        run: ./gradlew sonarqube
+            #- name: Scan Project
+            #run: ./gradlew sonarqube
 
       - name: Build Project
         run: ./gradlew assembleDebug
