@@ -31,9 +31,3 @@ class Sys {
     @SerializedName("sunset")
     var sunset: Long = 0
 }
-
-class Constants {
-    companion object {
-        var HTTP_API_OPENWEATHERMAP_URL = "http://api.openweathermap.org/data/2.5/"
-    }
-}

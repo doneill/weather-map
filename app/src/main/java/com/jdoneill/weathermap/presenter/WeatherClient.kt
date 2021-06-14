@@ -25,4 +25,8 @@ class WeatherClient {
 
         return weatherService.weatherByCoord("imperial", lat, lon, apiKey)
     }
+
+    companion object {
+        private const val BASE_URL = "http://api.openweathermap.org/"
+    }
 }
