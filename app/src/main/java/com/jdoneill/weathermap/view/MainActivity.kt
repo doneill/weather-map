@@ -247,7 +247,6 @@ class MainActivity : AppCompatActivity() {
                 locationDisplay.autoPanMode = LocationDisplay.AutoPanMode.RECENTER
                 locationDisplay.startAsync()
             }
-            viewModel.displayMessage("app has location permissions")
         }
     }
 
