@@ -3,7 +3,7 @@ package com.jdoneill.weathermap.presenter
 import com.google.gson.GsonBuilder
 
 import com.jdoneill.weathermap.BuildConfig
-import com.jdoneill.weathermap.data.WeatherData
+import com.jdoneill.weathermap.model.WeatherData
 import com.jdoneill.weathermap.service.WeatherService
 
 import okhttp3.OkHttpClient

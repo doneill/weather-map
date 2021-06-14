@@ -1,6 +1,6 @@
 package com.jdoneill.weathermap.service
 
-import com.jdoneill.weathermap.data.WeatherData
+import com.jdoneill.weathermap.model.WeatherData
 
 import retrofit2.http.GET
 import retrofit2.http.Query

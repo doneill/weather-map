@@ -1,4 +1,4 @@
-package com.jdoneill.weathermap.data
+package com.jdoneill.weathermap.model
 
 import com.google.gson.annotations.SerializedName
 
@@ -20,9 +20,9 @@ class Weather {
 class Main {
     var temp: Float = 0.0f
     @SerializedName("temp_max")
-    var minTemp: Float = 0.0f
-    @SerializedName("temp_min")
     var maxTemp: Float = 0.0f
+    @SerializedName("temp_min")
+    var minTemp: Float = 0.0f
 }
 
 class Sys {
