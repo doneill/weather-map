@@ -38,6 +38,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.selector
 
 const val APIKEY = BuildConfig.API_KEY
+const val ARCGIS_KEY = BuildConfig.ARCGIS_KEY
 // degree sign
 const val DEGREE: String = "\u00B0"
 
