@@ -3,6 +3,9 @@
     <string name="action_settings">Settings</string>
     <string name="place_search">Search</string>
     <string name="location_settings">Location Disabled: Reset in App Settings</string>
+    <!-- Main Activity View -->
+    <string name="map_layer_button">Map Layer Button</string>
+    <string name="map_location_button">Location Button</string>
     <!-- Open Weather Map Layers -->
     <string name="layer_title">Weather Layers</string>
     <string name="layer_clear">Clear Layers</string>
