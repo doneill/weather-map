@@ -12,6 +12,8 @@ import com.esri.arcgisruntime.mapping.ArcGISMap
 import com.jdoneill.weathermap.presenter.WeatherClient
 import com.jdoneill.weathermap.util.GeometryUtil
 import com.jdoneill.weathermap.util.singleArgViewModelFactory
+import kotlinx.coroutines.CoroutineExceptionHandler
+import timber.log.Timber
 
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -22,6 +24,10 @@ class MainViewModel(private val map: ArcGISMap) : ViewModel() {
     companion object {
         // the map to pass the the model
         val FACTORY = singleArgViewModelFactory(::MainViewModel)
+    }
+
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        onError("Exception: ${throwable.localizedMessage}")
     }
 
     private val _snackBar = MutableLiveData<String?>()
@@ -80,5 +86,9 @@ class MainViewModel(private val map: ArcGISMap) : ViewModel() {
 
     fun onSnackbarShown() {
         _snackBar.value = null
+    }
+
+    private fun onError(message: String) {
+        Timber.d(message)
     }
 }
