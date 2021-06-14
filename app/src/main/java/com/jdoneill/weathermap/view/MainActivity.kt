@@ -13,7 +13,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.esri.arcgisruntime.ArcGISRuntimeEnvironment
 
@@ -166,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             params.bottomMargin += heightDelta
         }
 
-        viewModel.snackbar.observe(this, Observer {
+        viewModel.snackbar.observe(this, {
             it?.let {
                 Snackbar.make(mapView, it, Snackbar.LENGTH_SHORT).show()
                 viewModel.onSnackbarShown()
