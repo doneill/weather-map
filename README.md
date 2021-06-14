@@ -14,7 +14,7 @@ An Android app integrating OpenWeatherMap, Google Places API, and ArcGIS Runtime
 - [Open Weather Map](https://openweathermap.org/)
 - [Retrofit](http://square.github.io/retrofit/)
 
-## Licensing
+## API Keys
 This app uses 3 developer products that requiring licensing to enable its full capabilities:  
 
 - [ArcGIS Runtime](https://developers.arcgis.com/documentation/mapping-apis-and-services/security/#api-keys): The mapping engine and coordinate conversion tool
