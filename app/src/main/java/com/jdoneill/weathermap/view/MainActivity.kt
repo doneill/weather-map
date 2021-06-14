@@ -59,11 +59,11 @@ class MainActivity : AppCompatActivity() {
         mainBinding.mapView
     }
 
-    private val locationDisplay: LocationDisplay by lazy { mapView.locationDisplay }
-
     private val locationButton: FloatingActionButton by lazy {
         mainBinding.locationFab
     }
+
+    private val locationDisplay: LocationDisplay by lazy { mapView.locationDisplay }
 
     // mapping
     private lateinit var map: ArcGISMap
