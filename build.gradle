@@ -6,7 +6,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
     }
     dependencies {
@@ -24,7 +23,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         maven { url 'https://esri.jfrog.io/artifactory/arcgis' }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         jcenter()
