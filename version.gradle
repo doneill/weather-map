@@ -26,6 +26,6 @@ ext {
     archLifecycleVersion = '2.1.0'
     junitVersion = '4.13.2'
     // plugin versions
-    gradleVersion = '7.0.0-beta03'
+    gradleVersion = '7.3.0-alpha07'
     ktlintVersion = '7.1.0'
 }
