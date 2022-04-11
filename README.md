@@ -20,7 +20,7 @@ This app uses 3 developer products that requiring API keys to enable its full ca
 - [OpenWeather API](https://openweathermap.org/appid): Current weather for location by coordinate or place name
 - [Google Places API](https://developers.google.com/maps/documentation/places/web-service/get-api-key): Search for places with detailed information and autocomplete when user types in search box
 
-Once you have registered the app and received your API keys you can use them by creating a **gradle.properties** file in the root of the **app** module with a string value pair representing your API Keys. This file is not tracked in Git to keep personal API keys secret.
+Once you have registered the app and received your API keys you can use them by creating a local **gradle.properties** file in the root of the **app** module with a string value pair representing your API Keys. This file is not tracked in Git to keep personal API keys secret.
 
 ```bash
 API_KEY = "YOUR-OPEN-WEATHER-API-KEY"
