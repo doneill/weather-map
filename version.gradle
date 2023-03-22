@@ -11,7 +11,7 @@ ext {
     constraintLayoutVersion = '2.0.4'
     coroutinesVersion = '1.4.1'
     koinVersion = '2.0.1'
-    kotlinVersion = '1.6.20'
+    kotlinVersion = '1.6.21'
     ktorVersion = '1.4.0'
     leakcanaryVersion = '2.10'
     lifecycleVersion = '2.2.0'
