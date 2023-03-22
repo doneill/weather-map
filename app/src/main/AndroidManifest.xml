@@ -14,7 +14,6 @@
         android:name=".WeatherMap"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
@@ -22,9 +21,9 @@
 
         <activity
             android:name=".view.MainActivity"
-            android:label="@string/app_name"
             android:foregroundServiceType="location"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -32,7 +31,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.PlaceSearchActivity"
-            android:parentActivityName=".view.MainActivity">
+            android:parentActivityName=".view.MainActivity"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
