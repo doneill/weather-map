@@ -13,7 +13,7 @@ ext {
     koinVersion = '2.0.1'
     kotlinVersion = '1.6.20'
     ktorVersion = '1.4.0'
-    leakcanaryVersion = '1.5.4'
+    leakcanaryVersion = '2.10'
     lifecycleVersion = '2.2.0'
     lifecycleVersionKtx = '2.3.1'
     logbackVersion = '1.2.3'
